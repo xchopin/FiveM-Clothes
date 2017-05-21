@@ -3,7 +3,6 @@
 --                                 License: Apache 2.0                               --
 ---------------------------------------------------------------------------------------
 
-local isShopMenuOpen = false
 
 -- List of the clothing shops {parts,x,y,z}
 local clothingShops = {
@@ -22,69 +21,6 @@ local clothingShops = {
     { name="Binco's Clothing Shop", colour=47, id=73, x=-3172.49682617188, y=1048.13330078125,  z=20.8632030487061},
     { name="Binco's Clothing Shop", colour=47, id=73, x=-1108.44177246094, y=2708.92358398438,  z=19.1078643798828},
 }
--- Places the blips on the map
-Citizen.CreateThread(function()
-    for _, item in pairs(clothingShops) do
-        item.blip = AddBlipForCoord(item.x, item.y, item.z)
-        SetBlipSprite(item.blip, item.id)
-        SetBlipAsShortRange(item.blip, true)
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentString(item.name)
-        EndTextCommandSetBlipName(item.blip)
-    end
-end)
-
--- Thread to open the menu
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(0)
-        if (IsNearShop()) then
-            if IsControlJustReleased(1, 51)  then -- IF INPUT_PICKUP Is pressed
-                if IsInVehicle() then
-                    DisplayHelpText("You cannot change your clothes ~r~from a vehicle~w~.")
-                else
-                    if isShopMenuOpen then
-                        -- ToDo: close the GUI
-                    else
-                        -- ToDo: open the GUI
-                    end
-                    isShopMenuOpen = not isShopMenuOpen
-                end
-            end
-        else
-            if isShopMenuOpen then
-                -- ToDo: open the GUI
-            end
-            isShopMenuOpen = false
-        end
-    end
-end)
-
--- Check if a player is near of a shop
-function IsNearShop()
-    for _, item in pairs(clothingShops) do
-        local ply = GetPlayerPed(-1)
-        local plyCoords = GetEntityCoords(ply, 0)
-        local distance = GetDistanceBetweenCoords(item.x, item.y, item.z, plyCoords["x"], plyCoords["y"], plyCoords["z"], true)
-        if(distance < 35) then
-            DisplayHelpText("Welcome to the ~y~clothing shop~w~.")
-            DrawMarker(1, item.x, item.y, item.z-1, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 39, 221, 39, 0, 0, 2, 0, 0, 0, 0)
-        end
-        if(distance < 2) then
-            return true
-        end
-    end
-end
-
--- Check if a player is in a vehicle
-function IsInVehicle()
-    local player = GetPlayerPed(-1)
-    return IsPedSittingInAnyVehicle(player)
-end
-
--------------------------------------------------------------------------------
-------------------------- GRAPHIC USER INTERFACE ------------------------------
--------------------------------------------------------------------------------
 
 -- Main menu
 local menu = {
@@ -131,6 +67,73 @@ local menu = {
     }
 }
 
+
+
+
+-- Places the blips on the map
+Citizen.CreateThread(function()
+    for _, item in pairs(clothingShops) do
+        item.blip = AddBlipForCoord(item.x, item.y, item.z)
+        SetBlipSprite(item.blip, item.id)
+        SetBlipAsShortRange(item.blip, true)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString(item.name)
+        EndTextCommandSetBlipName(item.blip)
+    end
+end)
+
+-- Thread to open the menu
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+        if (IsNearShop()) then
+            DisplayHelpText('Press ~INPUT_CONTEXT~ to ~b~buy new clothes~w~.',0,1,0.5,0.8,0.6,255,255,255,255) -- ~g~E~s~
+            if IsControlJustReleased(1, 51) then
+                if IsInVehicle() then
+                    DisplayHelpText("You cannot change your clothes ~r~from a vehicle~w~.")
+                else
+                    if menu.isOpened then
+                        CloseMenu()
+                    else
+                        OpenMenu()
+                    end
+                    menu.isOpened = not menu.isOpened
+                end
+            end
+        else
+            menu.isOpened = false
+        end
+    end
+end)
+
+-- Check if a player is near of a shop
+function IsNearShop()
+    for _, item in pairs(clothingShops) do
+        local ply = GetPlayerPed(-1)
+        local plyCoords = GetEntityCoords(ply, 0)
+        local distance = GetDistanceBetweenCoords(item.x, item.y, item.z, plyCoords["x"], plyCoords["y"], plyCoords["z"], true)
+        if(distance < 35) then
+            DisplayHelpText("Welcome to the ~y~clothing shop~w~.")
+            DrawMarker(1, item.x, item.y, item.z-1, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 39, 221, 39, 0, 0, 2, 0, 0, 0, 0)
+        end
+        if(distance < 2) then
+
+            return true
+        end
+    end
+end
+
+-- Check if a player is in a vehicle
+function IsInVehicle()
+    local player = GetPlayerPed(-1)
+    return IsPedSittingInAnyVehicle(player)
+end
+
+-------------------------------------------------------------------------------
+------------------------- GRAPHIC USER INTERFACE ------------------------------
+-------------------------------------------------------------------------------
+
+
 -- Choices
 function ButtonSelected(button)
     local player = GetPlayerPed(-1)
@@ -153,8 +156,8 @@ function ButtonSelected(button)
     end
 end
 
-
-local function OpenMenu(menu)
+-- Open a category
+function OpenMenu(menu)
     menu.lastmenu = menu.currentmenu
     if menu == "Face" then
         menu.lastmenu = "main"
@@ -170,21 +173,21 @@ local function OpenMenu(menu)
 end
 
 -- Prints a notification
-local function drawNotification(text)
+function drawNotification(text)
     SetNotificationTextEntry("STRING")
     AddTextComponentString(text)
     DrawNotification(false, false)
 end
 
 -- Creates notify messages
-local function DisplayHelpText(str)
+function DisplayHelpText(str)
     SetTextComponentFormat("STRING")
     AddTextComponentString(str)
     DisplayHelpTextFromStringLabel(0, 0, 1, -1)
 end
 
 -- Prints the menu title
-local function drawMenuTitle(txt,x,y)
+function drawMenuTitle(txt,x,y)
     local menu = menu.menu
     SetTextFont(2)
     SetTextProportional(0)
@@ -197,7 +200,7 @@ local function drawMenuTitle(txt,x,y)
 end
 
 -- Displays buttons
-local function drawMenuButton(button, x, y, selected)
+function drawMenuButton(button, x, y, selected)
     local menu = menu.menu
     SetTextFont(menu.font)
     SetTextProportional(0)
@@ -219,7 +222,7 @@ local function drawMenuButton(button, x, y, selected)
 end
 
 -- Shows the info about a button
-local function drawMenuInfo(text)
+function drawMenuInfo(text)
     local menu = menu.menu
     SetTextFont(menu.font)
     SetTextProportional(0)
@@ -233,8 +236,8 @@ local function drawMenuInfo(text)
 end
 
 -- Displays a menu on the right
-local function drawMenuRight(txt,x,y,selected)
-    local menu = menu.menu
+function drawMenuRight(txt,x,y,selected)
+    menu = menu.menu
     SetTextFont(menu.font)
     SetTextProportional(0)
     SetTextScale(menu.scale, menu.scale)
@@ -250,7 +253,7 @@ local function drawMenuRight(txt,x,y,selected)
 end
 
 -- Prints the text
-local function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
+function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
     SetTextFont(font)
     SetTextProportional(0)
     SetTextScale(scale, scale)
@@ -266,7 +269,7 @@ local function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
 end
 
 -- Go back
-local function BackMenu()
+function BackMenu()
     if backlock then
         return
     end
@@ -281,14 +284,14 @@ local function BackMenu()
 end
 
 -- Opens the menu
-local function OpenMenu()
+function OpenMenu()
     menu.currentmenu = "main"
     menu.isOpen = true
     menu.selectedbutton = 0
 end
 
 -- Closes the menu
-local function CloseMenu()
+function CloseMenu()
     menu.isOpen = false
     menu.menu.from = 1
     menu.menu.to = 10
@@ -365,32 +368,32 @@ end)
 ----------------- HELPER FUNCTIONS -----------------
 ----------------------------------------------------
 
-local function f(n)
+function f(n)
     return n + 0.0001
 end
 
-local function LocalPed()
+function LocalPed()
     return GetPlayerPed(-1)
 end
 
-local function try(f, catch_f)
+function try(f, catch_f)
     local status, exception = pcall(f)
     if not status then
         catch_f(exception)
     end
 end
 
-local function firstToUpper(str)
+function firstToUpper(str)
     return (str:gsub("^%l", string.upper))
 end
 
-local function tablelength(T)
+function tablelength(T)
     local count = 0
     for _ in pairs(T) do count = count + 1 end
     return count
 end
 
-local function round(num, idp)
+function round(num, idp)
     if idp and idp>0 then
         local mult = 10^idp
         return math.floor(num * mult + 0.5) / mult
