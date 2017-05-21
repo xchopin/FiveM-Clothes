@@ -32,11 +32,11 @@ Citizen.CreateThread(function()
     end
 end)
 
--- Check if player is near of a shop
+-- Check if a player is near of a shop
 local function isNear()
     local player = GetPlayerPed(-1)
     local plyCoords = GetEntityCoords(player, 0)
-    for _, item in pairs(banks) do
+    for _, item in pairs(clothingShops) do
         local distance = GetDistanceBetweenCoords(item.x, item.y, item.z,  plyCoords["x"], plyCoords["y"], plyCoords["z"], true)
         if(distance <= 2) then
             return true
@@ -47,10 +47,6 @@ end
 -- Check if a player is in a vehicle
 local function isInVehicle()
     local player = GetPlayerPed(-1)
-    if IsPedSittingInAnyVehicle(player) then
-        return true
-    else
-        return false
-    end
+    return IsPedSittingInAnyVehicle(player)
 end
 
