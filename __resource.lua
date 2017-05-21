@@ -1,8 +1,7 @@
---
--- Created by IntelliJ IDEA.
--- User: Xavier
--- Date: 21/05/2017
--- Time: 20:44
--- To change this template use File | Settings | File Templates.
---
+---------------------------------------------------------------------------------------
+--                     Author: Xavier CHOPIN <www.github.com/xchopin>                --
+--                                 License: Apache 2.0                               --
+---------------------------------------------------------------------------------------
 
+--server_script 'server.lua'
+client_script 'client.lua'
