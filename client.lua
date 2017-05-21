@@ -38,7 +38,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
-        if IsNear() then
+        if (IsNearShop()) then
             DisplayHelpText("Welcome to the ~y~clothing shop~w~.")
             if IsControlJustReleased(1, 51)  then -- IF INPUT_PICKUP Is pressed
                 if IsInVehicle() then
@@ -62,20 +62,28 @@ Citizen.CreateThread(function()
 end)
 
 -- Check if a player is near of a shop
-local function isNear()
-    local player = GetPlayerPed(-1)
-    local plyCoords = GetEntityCoords(player, 0)
+function IsNearShop()
     for _, item in pairs(clothingShops) do
-        local distance = GetDistanceBetweenCoords(item.x, item.y, item.z,  plyCoords["x"], plyCoords["y"], plyCoords["z"], true)
-        if(distance <= 2) then
+        local ply = GetPlayerPed(-1)
+        local plyCoords = GetEntityCoords(ply, 0)
+        local distance = GetDistanceBetweenCoords(item.x, item.y, item.z, plyCoords["x"], plyCoords["y"], plyCoords["z"], true)
+        if(distance < 35) then
+            DrawMarker(1, item.x, item.y, item.z-1, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 39, 221, 39, 0, 0, 2, 0, 0, 0, 0)
+        end
+        if(distance < 2) then
             return true
         end
     end
 end
 
 -- Check if a player is in a vehicle
-local function isInVehicle()
+function IsInVehicle()
     local player = GetPlayerPed(-1)
     return IsPedSittingInAnyVehicle(player)
 end
 
+function DisplayHelpText(str)
+    SetTextComponentFormat("STRING")
+    AddTextComponentString(str)
+    DisplayHelpTextFromStringLabel(0, 0, 1, -1)
+end
