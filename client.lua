@@ -3,6 +3,8 @@
 --                                 License: Apache 2.0                               --
 ---------------------------------------------------------------------------------------
 
+local isShopMenuOpen = false
+
 -- List of the clothing shops {parts,x,y,z}
 local clothingShops = {
     { name="Binco's Clothing Shop", colour=47, id=73, x=72.2545394897461,  y=-1399.10229492188, z=29.3761386871338},
@@ -20,7 +22,7 @@ local clothingShops = {
     { name="Binco's Clothing Shop", colour=47, id=73, x=-3172.49682617188, y=1048.13330078125,  z=20.8632030487061},
     { name="Binco's Clothing Shop", colour=47, id=73, x=-1108.44177246094, y=2708.92358398438,  z=19.1078643798828},
 }
-
+-- Places the blips on the map
 Citizen.CreateThread(function()
     for _, item in pairs(clothingShops) do
         item.blip = AddBlipForCoord(item.x, item.y, item.z)
@@ -29,6 +31,33 @@ Citizen.CreateThread(function()
         BeginTextCommandSetBlipName("STRING")
         AddTextComponentString(item.name)
         EndTextCommandSetBlipName(item.blip)
+    end
+end)
+
+-- Thread to open the menu
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+        if IsNear() then
+            DisplayHelpText("Welcome to the ~y~clothing shop~w~.")
+            if IsControlJustReleased(1, 51)  then -- IF INPUT_PICKUP Is pressed
+                if IsInVehicle() then
+                    DisplayHelpText("You cannot change your clothes ~r~from a vehicle~w~.")
+                else
+                    if isShopMenuOpen then
+                        -- ToDo: close the GUI
+                    else
+                        -- ToDo: open the GUI
+                    end
+                    isShopMenuOpen = not isShopMenuOpen
+                end
+            end
+        else
+            if isShopMenuOpen then
+                -- ToDo: open the GUI
+            end
+            isShopMenuOpen = false
+        end
     end
 end)
 
