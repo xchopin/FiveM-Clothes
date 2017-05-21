@@ -39,7 +39,6 @@ Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
         if (IsNearShop()) then
-            DisplayHelpText("Welcome to the ~y~clothing shop~w~.")
             if IsControlJustReleased(1, 51)  then -- IF INPUT_PICKUP Is pressed
                 if IsInVehicle() then
                     DisplayHelpText("You cannot change your clothes ~r~from a vehicle~w~.")
@@ -68,6 +67,7 @@ function IsNearShop()
         local plyCoords = GetEntityCoords(ply, 0)
         local distance = GetDistanceBetweenCoords(item.x, item.y, item.z, plyCoords["x"], plyCoords["y"], plyCoords["z"], true)
         if(distance < 35) then
+            DisplayHelpText("Welcome to the ~y~clothing shop~w~.")
             DrawMarker(1, item.x, item.y, item.z-1, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 39, 221, 39, 0, 0, 2, 0, 0, 0, 0)
         end
         if(distance < 2) then
