@@ -4,6 +4,27 @@
 ---------------------------------------------------------------------------------------
 
 
+local firstspawn = 0
+
+AddEventHandler('playerSpawned', function(spawn)
+    if firstspawn == 0 then
+        TriggerServerEvent("clothing_shop:SpawnPlayer_server")
+        firstspawn = 1
+    end
+end)
+
+RegisterNetEvent("clothing_shop:loadSkin_client")
+AddEventHandler("clothing_shop:loadSkin_client",function(skin)
+    LoadSkin(skin)
+end)
+
+AddEventHandler('onPlayerDied', function()
+    TriggerServerEvent("clothing_shop:SpawnPlayer_server")
+end)
+
+
+
+
 -- List of the clothing shops {parts,x,y,z}
 local clothingShops = {
     { name="Binco's Clothing Shop", colour=47, id=73, x=72.2545394897461,  y=-1399.10229492188, z=29.3761386871338},
