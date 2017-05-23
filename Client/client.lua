@@ -16,7 +16,7 @@ end)
 
 RegisterNetEvent("clothing_shop:loadItems_client")
 AddEventHandler("clothing_shop:loadItems_client",function(items)
-    SetAllClientsItems(items)
+    LoadItems(items)
 end)
 
 AddEventHandler('onPlayerDied', function()
@@ -24,7 +24,7 @@ AddEventHandler('onPlayerDied', function()
 end)
 
 
-function SetAllClientItems(items)
+function LoadItems(items)
     local playerPed = GetPlayerPed(-1)
     if (items ~= nil) then
         setSkin(items.skin)
