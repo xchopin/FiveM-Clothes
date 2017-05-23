@@ -3,7 +3,6 @@
 --                                 License: Apache 2.0                               --
 ---------------------------------------------------------------------------------------
 
-
 local firstspawn = 0
 
 AddEventHandler('playerSpawned', function(spawn)
@@ -11,6 +10,8 @@ AddEventHandler('playerSpawned', function(spawn)
         TriggerServerEvent("clothing_shop:SpawnPlayer_server")
         firstspawn = 1
     end
+    --TriggerServerEvent("weaponshop:playerSpawned",a)
+    --TriggerServerEvent("item:getItems")
 end)
 
 RegisterNetEvent("clothing_shop:loadSkin_client")
@@ -22,7 +23,73 @@ AddEventHandler('onPlayerDied', function()
     TriggerServerEvent("clothing_shop:SpawnPlayer_server")
 end)
 
+-- Sets skin's client
+function setSkin(skin)
+    local modelhashed = GetHashKey(skin)
+    RequestModel(modelhashed)
+    while not HasModelLoaded(modelhashed) do 
+        RequestModel(modelhashed)
+        Citizen.Wait(0)
+    end
+    SetPlayerModel(PlayerId(), modelhashed)
+end
 
+function SetAllClientItems(items)
+    local playerPed = GetPlayerPed(-1)
+    if (items ~= nil) then
+        setSkin(items.skin)  
+        setItem("component", 0, items.face, items.face_texture)
+        setItem("component", 2, items.hair, items.hair_texture)
+        setItem("component", 8, items.shirt, items.shirt_texture)
+        setItem("component", 4, items.pants, items.pants_texture)
+        setItem("component", 6, items.shoes, items.shoes_texture)
+        setItem("component", 9, items.vest, items.vest_texture)
+        setItem("component", 5, items.bag, items.bag_texture)
+        setItem("prop", 0, items.hat, items.hat_texture)
+        setItem("component", 1, items.mask, items.mask_texture)
+        setItem("prop", 1, items.glasses, items.glasses_texture)
+        setItem("component", 3, items.gloves, items.gloves_texture)
+        setItem("component", 11, items.jacket, items.jacket_texture)
+        setItem("prop", 2, items.ears, items.ears_texture)
+    else
+     print('CLOTHING_SHOP_EXCEPTION: TRIED TO LOAD ITEMS\'S CLIENT BUT WERE NULL')
+     SetPedComponentVariation(playerPed, 0, 0, 0, 2) --Face
+     SetPedComponentVariation(playerPed, 2, 11, 4, 2) --Hair 
+     SetPedComponentVariation(playerPed, 4, 1, 5, 2) -- Pantalon
+     SetPedComponentVariation(playerPed, 6, 1, 0, 2) -- Shoes
+     SetPedComponentVariation(playerPed, 11, 7, 2, 2) -- Jacket
+    end    
+
+    SetModelAsNoLongerNeeded(modelhashed)
+
+end
+
+-- Set an item on client's character
+----------------------------------------------------------
+---- TYPE = "component"     --      TYPE = "prop"       --
+----------------------------------------------------------
+---- NAME      |  Part      ---- NAME      |  part      --
+----------------------------------------------------------
+---- Face      |    0       --  Hats       |     0      -- 
+---- Mask      |    1       --  Glasses    |     1      -- 
+---- Hair      |    2       --  Ears       |     2      --           
+---- Gloves    |    3       --             |            --    
+---- Pants     |    4       --             |            --           
+---- Bags      |    5       --             |            --           
+---- Shoes     |    6       --             |            --           
+---- Shirts    |    8       --             |            --           
+---- Vests     |    9       --             |            --           
+---- Jackets   |   11       --             |            --    
+----------------------------------------------------------
+function setItem(type, part, value, texture_value)
+    if (part ~= nil and value ~= nil and texture_value ~= nil and type ~= nil) then
+        if (type == "component") then
+            SetPedComponentVariation(GetPlayerPed(-1), part, value, value_texture, 4)
+        else if (type == "prop")
+            SetPedPropIndex(GetPlayerPed(-1), part, value, value_texture, 0)
+        end
+    end   
+end
 
 
 -- List of the clothing shops {parts,x,y,z}
@@ -50,20 +117,6 @@ function DisplayHelpText(str)
     DisplayHelpTextFromStringLabel(0, 0, 1, -1)
 end
 
--- Loads skin's client
-function LoadSkin(skin)
-    local modelhashed = GetHashKey(skin)
-    RequestModel(modelhashed)
-    while not HasModelLoaded(modelhashed) do 
-        RequestModel(modelhashed)
-        Citizen.Wait(2)
-    end
-    SetPlayerModel(PlayerId(), modelhashed)
-    SetModelAsNoLongerNeeded(modelhashed)
-end
-
-
-
 -- Check if a player is near of a shop
 function IsNearShop()
     for _, item in pairs(clothingShops) do
@@ -74,7 +127,7 @@ function IsNearShop()
             DrawMarker(1, item.x, item.y, item.z-1, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 39, 221, 39, 0, 0, 2, 0, 0, 0, 0)
         end
         if(distance < 2) then
-             DisplayHelpText('Appuyez sur ~INPUT_CONTEXT~ acheter des ~g~vêtements',0,1,0.5,0.8,0.6,255,255,255,255) -- ~g~E~s~          
+             DisplayHelpText('Press ~INPUT_CONTEXT~ to buy new ~g~clothes',0,1,0.5,0.8,0.6,255,255,255,255)       
             return true
         end
     end
@@ -88,41 +141,13 @@ end
 
 
 function BuyItem()
-    --TriggerServerEvent("jobssystem:jobs", 2)
+    --TriggerServerEvent("NEW SIGNAL", 2)
 end
-
--- Set an item on client's character
-----------------------------------------------------------
----- TYPE = "component"     --      TYPE = "prop"       --
-----------------------------------------------------------
----- NAME      |  Part      ---- NAME      |  part      --
-----------------------------------------------------------
----- Face      |    0       --  Hats       |     0      -- 
----- Mask      |    1       --  Glasses    |     1      -- 
----- Hair      |    2       --  Piercings  |     2      --           
----- Gloves    |    3       --             |            --    
----- Pants     |    4       --             |            --           
----- Bags      |    5       --             |            --           
----- Shoes     |    6       --             |            --           
----- Shirts    |    8       --             |            --           
----- Vests     |    9       --             |            --           
----- Jackets   |   11       --             |            --    
-----------------------------------------------------------
-function setItem(type, part, value, texture_value)
-    if (part ~= nil and value ~= nil and texture_value ~= nil and type ~= nil) then
-        if (type == "component") then
-            SetPedComponentVariation(GetPlayerPed(-1), value, value_texture, 4)
-        else if (type == "prop")
-            SetPedPropIndex(GetPlayerPed(-1), value, value_texture, 0)
-        end
-    end   
-end
-
 
 
 local skinOptions = {
     open = false,
-    title = "Changer de look",
+    title = "New style",
     currentmenu = "main",
     lastmenu = "main",
     currentpos = nil,
@@ -227,12 +252,12 @@ function skinMenu:saveItem(menuId, value, value_texture)
 end
 
 
-skinMenu:setMenu( "main","Vetements",{ {
-        id="tete",
-        name = "Tete",
+skinMenu:setMenu( "main","Clothes",{ {
+        id="head",
+        name = "Head",
         description = "",
         onClick = function()
-            skinMenu:toMenu("tete")
+            skinMenu:toMenu("head")
         end,
         onLeft = function() return false end,
         onRight = function() return false end,
@@ -240,7 +265,7 @@ skinMenu:setMenu( "main","Vetements",{ {
         onBack = function() return false end
     }, {
         id="body",
-        name = "Corps",
+        name = "Body",
         description = "",
         onClick= function()
             skinMenu:toMenu("body")
@@ -306,7 +331,7 @@ skinMenu:setMenu( "main","Vetements",{ {
         onBack = function() return false end
     } }, false )
 
-skinMenu:setMenu( "tete", "Tete", {
+skinMenu:setMenu( "head", "Head", {
        {
         id="hair",
         name = "Cheveux",
@@ -336,7 +361,7 @@ skinMenu:setMenu( "tete", "Tete", {
     },
     {
         id="glasses",
-        name = "Lunettes",
+        name = "Glasses",
         description = "",
         onClick = function()
             skinMenu:toMenu("glasses")
@@ -350,7 +375,7 @@ skinMenu:setMenu( "tete", "Tete", {
     },
     {
         id="helmet",
-        name = "Chapeaux",
+        name = "Hats",
         description = "",
         onClick = function()
             skinMenu:toMenu("helmet")
@@ -364,7 +389,7 @@ skinMenu:setMenu( "tete", "Tete", {
     },
     {
         id="mask",
-        name = "Masque",
+        name = "Mask",
         description = "",
         onClick = function()
             skinMenu:toMenu("mask")
@@ -378,12 +403,12 @@ skinMenu:setMenu( "tete", "Tete", {
     }
 }, false )
 
-skinMenu:setMenu( "glasses", "Lunettes", function() return skinMenu:getPropList(1) end, true )
-skinMenu:setMenu( "helmet", "Chapeaux", function() return skinMenu:getPropList(0) end, true )
-skinMenu:setMenu( "body", "Corps", {
+skinMenu:setMenu( "glasses", "Glasses", function() return skinMenu:getPropList(1) end, true )
+skinMenu:setMenu( "helmet", "Hats", function() return skinMenu:getPropList(0) end, true )
+skinMenu:setMenu( "body", "Body", {
     {
         id="glove",
-        name = "Bras et gants",
+        name = "Arms and gloves",
         description = "",
         onClick = function()
             skinMenu:toMenu("glove")
@@ -397,7 +422,7 @@ skinMenu:setMenu( "body", "Corps", {
 },
     {
         id="tshirt",
-        name = "T-Shirts",
+        name = "Shirts",
         description = "",
         onClick = function()
             skinMenu:toMenu("tshirt")
@@ -411,7 +436,7 @@ skinMenu:setMenu( "body", "Corps", {
     },
     {
         id="jacket",
-        name = "Vestes",
+        name = "Jackets",
         description = "",
         onClick = function()
             skinMenu:toMenu("jacket")
@@ -425,17 +450,17 @@ skinMenu:setMenu( "body", "Corps", {
     },
 }, false )
 
-skinMenu:setMenu( "face", "Visage", function() return skinMenu:getDrawableList(0) end , true )
-skinMenu:setMenu( "hair", "Cheveux", function() return skinMenu:getDrawableList(2) end , true )
-skinMenu:setMenu( "percing", "Piercing", function() return skinMenu:getPropList(2) end , true )
-skinMenu:setMenu( "mask", "Masque", function() return skinMenu:getDrawableList(1) end, true )
-skinMenu:setMenu( "pant", "Pantalons", function() return skinMenu:getDrawableList(4) end, true )
-skinMenu:setMenu( "shoe", "Chaussures", function() return skinMenu:getDrawableList(6) end, true )
-skinMenu:setMenu( "accessory1", "Kevlar (skin)", function() return skinMenu:getDrawableList(9) end, true )
-skinMenu:setMenu( "accessory2", "Sacs", function() return skinMenu:getDrawableList(5) end, true )
-skinMenu:setMenu( "glove", "Torse et gants", function() return skinMenu:getDrawableList(3) end, true )
-skinMenu:setMenu( "tshirt", "T-shirt", function() return skinMenu:getDrawableList(8) end, true )
-skinMenu:setMenu( "jacket", "Vestes", function() return skinMenu:getDrawableList(11) end, true )
+skinMenu:setMenu( "face", "Face", function() return skinMenu:getDrawableList(0) end , true )
+skinMenu:setMenu( "hair", "Hair", function() return skinMenu:getDrawableList(2) end , true )
+skinMenu:setMenu( "ears", "Ears", function() return skinMenu:getPropList(2) end , true )
+skinMenu:setMenu( "mask", "Mask", function() return skinMenu:getDrawableList(1) end, true )
+skinMenu:setMenu( "pant", "Pants", function() return skinMenu:getDrawableList(4) end, true )
+skinMenu:setMenu( "shoe", "Shoes", function() return skinMenu:getDrawableList(6) end, true )
+skinMenu:setMenu( "accessory1", "Vests", function() return skinMenu:getDrawableList(9) end, true )
+skinMenu:setMenu( "accessory2", "Bags", function() return skinMenu:getDrawableList(5) end, true )
+skinMenu:setMenu( "glove", "Arms and gloves", function() return skinMenu:getDrawableList(3) end, true )
+skinMenu:setMenu( "tshirt", "Shirts", function() return skinMenu:getDrawableList(8) end, true )
+skinMenu:setMenu( "jacket", "Jackets", function() return skinMenu:getDrawableList(11) end, true )
 
 
 -- Places the blips on the map
@@ -463,3 +488,4 @@ Citizen.CreateThread(function()
          Citizen.Wait(0)
     end
 end)
+
