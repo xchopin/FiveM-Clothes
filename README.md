@@ -1,2 +1,16 @@
-# chopin_clothingShop
-A clothing shop mod for FiveM | Requires Essential Mod 2.x
+# es_clothingShop
+
+# WORK IN PROGRESS
+
+> The best Clothing Shop Mod ever created for FiveM 
+
+
+
+# Requirements
+- EssentialMode 2.X
+- MySQL
+
+# How To Install
+
+# API
+
