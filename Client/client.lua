@@ -27,7 +27,7 @@ end)
 function SetAllClientItems(items)
     local playerPed = GetPlayerPed(-1)
     if (items ~= nil) then
-        setSkin(items.skin)  
+        setSkin(items.skin)
         setItem("component", 0, items.face, items.face_texture)
         setItem("component", 1, items.mask, items.mask_texture)
         setItem("component", 2, items.hair, items.hair_texture)
@@ -45,12 +45,12 @@ function SetAllClientItems(items)
     else
         print('CLOTHING_SHOP_EXCEPTION: TRIED TO LOAD ITEMS\'S CLIENT BUT WERE NULL | MIGHT BE THEIR FIRST CONNECTION')
         setSkin("mp_m_freemode_01") -- I hope the feminists are not gonna argue lol
-        SetPedComponentVariation(GetPlayerPed(-1), 0, 0, 0, 2) 
-        SetPedComponentVariation(GetPlayerPed(-1), 2, 11, 4, 2) 
-        SetPedComponentVariation(GetPlayerPed(-1), 4, 1, 5, 2) 
-        SetPedComponentVariation(GetPlayerPed(-1), 6, 1, 0, 2) 
-        SetPedComponentVariation(GetPlayerPed(-1), 11, 7, 2, 2) 
-    end    
+        SetPedComponentVariation(GetPlayerPed(-1), 0, 0, 0, 2)
+        SetPedComponentVariation(GetPlayerPed(-1), 2, 11, 4, 2)
+        SetPedComponentVariation(GetPlayerPed(-1), 4, 1, 5, 2)
+        SetPedComponentVariation(GetPlayerPed(-1), 6, 1, 0, 2)
+        SetPedComponentVariation(GetPlayerPed(-1), 11, 7, 2, 2)
+    end
 
     SetModelAsNoLongerNeeded(modelhashed)
 end
@@ -59,7 +59,7 @@ end
 function setSkin(skin)
     local modelhashed = GetHashKey(skin)
     RequestModel(modelhashed)
-    while not HasModelLoaded(modelhashed) do 
+    while not HasModelLoaded(modelhashed) do
         RequestModel(modelhashed)
         Citizen.Wait(0)
     end
@@ -73,25 +73,27 @@ end
 ----------------------------------------------------------
 ---- NAME      |  part      --   NAME      |  part      --
 ----------------------------------------------------------
----- Face      |    0       --  Hats       |     0      -- 
----- Mask      |    1       --  Glasses    |     1      -- 
----- Hair      |    2       --  Ears       |     2      --           
----- Gloves    |    3       --             |            --    
----- Pants     |    4       --             |            --           
----- Bags      |    5       --             |            --           
----- Shoes     |    6       --             |            --           
----- Shirts    |    8       --             |            --           
----- Vests     |    9       --             |            --           
----- Jackets   |   11       --             |            --    
+---- Face      |    0       --  Hats       |     0      --
+---- Mask      |    1       --  Glasses    |     1      --
+---- Hair      |    2       --  Ears       |     2      --
+---- Gloves    |    3       --             |            --
+---- Pants     |    4       --             |            --
+---- Bags      |    5       --             |            --
+---- Shoes     |    6       --             |            --
+---- Shirts    |    8       --             |            --
+---- Vests     |    9       --             |            --
+---- Jackets   |   11       --             |            --
 ----------------------------------------------------------
 function setItem(type, part, value, texture_value)
     if (part ~= nil and value ~= nil and texture_value ~= nil and type ~= nil) then
         if (type == "component") then
-            SetPedComponentVariation(GetPlayerPed(-1), part, value, value_texture, 4)
-        else if (type == "prop")
-            SetPedPropIndex(GetPlayerPed(-1), part, value, value_texture, 0)
+            SetPedComponentVariation(GetPlayerPed(-1), part, value, texture_value, 4)
+        else
+            if (type == "prop") then
+                SetPedPropIndex(GetPlayerPed(-1), part, value, texture_value, 0)
+            end
         end
-    end   
+    end
 end
 
 
@@ -130,7 +132,7 @@ function IsNearShop()
             DrawMarker(1, item.x, item.y, item.z-1, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 39, 221, 39, 0, 0, 2, 0, 0, 0, 0)
         end
         if(distance < 2) then
-             DisplayHelpText('Press ~INPUT_CONTEXT~ to buy new ~g~clothes',0,1,0.5,0.8,0.6,255,255,255,255)       
+            DisplayHelpText('Press ~INPUT_CONTEXT~ to buy new ~g~clothes',0,1,0.5,0.8,0.6,255,255,255,255)
             return true
         end
     end
@@ -256,86 +258,86 @@ end
 
 
 skinMenu:setMenu( "main","Clothes",{ {
-        id="head",
-        name = "Head",
-        description = "",
-        onClick = function()
-            skinMenu:toMenu("head")
-        end,
-        onLeft = function() return false end,
-        onRight = function() return false end,
-        onSelected = function() return false end,
-        onBack = function() return false end
-    }, {
-        id="body",
-        name = "Body",
-        description = "",
-        onClick= function()
-            skinMenu:toMenu("body")
-        end,
-        onLeft= function() return false end,
-        onRight= function() return false end,
-        onSelected= function() return false end,
-        onBack = function() return false end
-    }, {
-        id="pantmenu",
-        name = "Pantalons",
-        description = "",
-        onClick= function()
-            skinMenu:toMenu("pant")
-        end,
-        onLeft= function() return false end,
-        onRight= function() return false end,
-        onSelected= function() return false end,
-        onBack = function() return false end
-    }, {
-        id="shoeMenu",
-        name = "Chaussures",
-        description = "",
-        onClick= function()
-            skinMenu:toMenu("shoe")
-        end,
-        onLeft= function() return false end,
-        onRight= function() return false end,
-        onSelected= function() return false end,
-        onBack = function() return false end
-    }, {
-        id="accessory1Main",
-        name = "Kevlar (skin)",
-        description = "",
-        onClick= function()
-            skinMenu:toMenu("accessory1")
-        end,
-        onLeft= function() return false end,
-        onRight= function() return false end,
-        onSelected= function() return false end,
-        onBack = function() return false end
-    }, {
-        id="accessory2Main",
-        name = "Sacs",
-        description = "",
-        onClick= function()
-            skinMenu:toMenu("accessory2")
-        end,
-        onLeft= function() return false end,
-        onRight= function() return false end,
-        onSelected= function() return false end,
-        onBack = function() return false end
-    }, {
-        id="exit",
-        name = "Quitter",
-        description = "",
-        onClick= function()
-            skinMenu:close()
-        end,
-        onLeft= function() return false end,
-        onRight= function() return false end,
-        onSelected= function() return false end,
-        onBack = function() return false end
-    } }, false )
+    id="head",
+    name = "Head",
+    description = "",
+    onClick = function()
+        skinMenu:toMenu("head")
+    end,
+    onLeft = function() return false end,
+    onRight = function() return false end,
+    onSelected = function() return false end,
+    onBack = function() return false end
+}, {
+    id="body",
+    name = "Body",
+    description = "",
+    onClick= function()
+        skinMenu:toMenu("body")
+    end,
+    onLeft= function() return false end,
+    onRight= function() return false end,
+    onSelected= function() return false end,
+    onBack = function() return false end
+}, {
+    id="pantmenu",
+    name = "Pantalons",
+    description = "",
+    onClick= function()
+        skinMenu:toMenu("pant")
+    end,
+    onLeft= function() return false end,
+    onRight= function() return false end,
+    onSelected= function() return false end,
+    onBack = function() return false end
+}, {
+    id="shoeMenu",
+    name = "Chaussures",
+    description = "",
+    onClick= function()
+        skinMenu:toMenu("shoe")
+    end,
+    onLeft= function() return false end,
+    onRight= function() return false end,
+    onSelected= function() return false end,
+    onBack = function() return false end
+}, {
+    id="accessory1Main",
+    name = "Kevlar (skin)",
+    description = "",
+    onClick= function()
+        skinMenu:toMenu("accessory1")
+    end,
+    onLeft= function() return false end,
+    onRight= function() return false end,
+    onSelected= function() return false end,
+    onBack = function() return false end
+}, {
+    id="accessory2Main",
+    name = "Sacs",
+    description = "",
+    onClick= function()
+        skinMenu:toMenu("accessory2")
+    end,
+    onLeft= function() return false end,
+    onRight= function() return false end,
+    onSelected= function() return false end,
+    onBack = function() return false end
+}, {
+    id="exit",
+    name = "Quitter",
+    description = "",
+    onClick= function()
+        skinMenu:close()
+    end,
+    onLeft= function() return false end,
+    onRight= function() return false end,
+    onSelected= function() return false end,
+    onBack = function() return false end
+} }, false )
 
 skinMenu:setMenu( "head", "Head", {
-       {
+    {
         id="hair",
         name = "Cheveux",
         description = "",
@@ -422,7 +424,7 @@ skinMenu:setMenu( "body", "Body", {
         onBack = function()
             skinMenu:toMenu('main')
         end
-},
+    },
     {
         id="tshirt",
         name = "Shirts",
@@ -480,15 +482,15 @@ Citizen.CreateThread(function()
     while (true) do
         if skinMenu.open == true then
             skinMenu:display()
-        end     
-        if(IsNearShop()) then 
-           if IsControlJustPressed(1,51) then
+        end
+        if(IsNearShop()) then
+            if IsControlJustPressed(1,51) then
                 skinMenu.open = true
             end
         else
-            skinMenu:close() 
+            skinMenu:close()
         end
-         Citizen.Wait(0)
+        Citizen.Wait(0)
     end
 end)
 
