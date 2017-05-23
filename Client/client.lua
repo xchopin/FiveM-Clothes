@@ -42,7 +42,7 @@ function LoadItems(items)
         setItem("prop", 1, items.glasses, items.glasses_texture)
         setItem("prop", 2, items.ears, items.ears_texture)
     else
-        print('CLOTHING_SHOP_EXCEPTION: TRIED TO LOAD ITEMS\'S CLIENT BUT WERE NULL | MIGHT BE THEIR FIRST CONNECTION')
+        print('CLOTHING_SHOP_EXCEPTION: TRIED TO LOAD ITEMS\'S CLIENT BUT WERE NULL')
         setSkin("mp_m_freemode_01") -- I hope the feminists are not gonna argue lol
         SetPedComponentVariation(GetPlayerPed(-1), 0, 0, 0, 2)
         SetPedComponentVariation(GetPlayerPed(-1), 2, 11, 4, 2)
@@ -98,20 +98,20 @@ end
 
 -- List of the clothing shops {parts,x,y,z}
 local clothingShops = {
-    { name="Binco's Clothing Shop", colour=47, id=73, x=72.2545394897461,  y=-1399.10229492188, z=29.3761386871338},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=-703.77685546875,  y=-152.258544921875, z=37.4151458740234},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=-167.863754272461, y=-298.969482421875, z=39.7332878112793},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=428.694885253906,  y=-800.1064453125,   z=29.4911422729492},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=-829.413269042969, y=-1073.71032714844, z=11.3281078338623},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=-1447.7978515625,  y=-242.461242675781, z=49.8207931518555},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=11.6323690414429,  y=6514.224609375,    z=31.8778476715088},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=123.64656829834,   y=-219.440338134766, z=54.5578384399414},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=1696.29187011719,  y=4829.3125,         z=42.0631141662598},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=618.093444824219,  y=2759.62939453125,  z=42.0881042480469},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=1190.55017089844,  y=2713.44189453125,  z=38.2226257324219},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=-1193.42956542969, y=-772.262329101563, z=17.3244285583496},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=-3172.49682617188, y=1048.13330078125,  z=20.8632030487061},
-    { name="Binco's Clothing Shop", colour=47, id=73, x=-1108.44177246094, y=2708.92358398438,  z=19.1078643798828},
+    { name="Binco's Clothing Shop", color=47, id=73, x=72.2545394897461,  y=-1399.10229492188, z=29.3761386871338},
+    { name="Binco's Clothing Shop", color=47, id=73, x=-703.77685546875,  y=-152.258544921875, z=37.4151458740234},
+    { name="Binco's Clothing Shop", color=47, id=73, x=-167.863754272461, y=-298.969482421875, z=39.7332878112793},
+    { name="Binco's Clothing Shop", color=47, id=73, x=428.694885253906,  y=-800.1064453125,   z=29.4911422729492},
+    { name="Binco's Clothing Shop", color=47, id=73, x=-829.413269042969, y=-1073.71032714844, z=11.3281078338623},
+    { name="Binco's Clothing Shop", color=47, id=73, x=-1447.7978515625,  y=-242.461242675781, z=49.8207931518555},
+    { name="Binco's Clothing Shop", color=47, id=73, x=11.6323690414429,  y=6514.224609375,    z=31.8778476715088},
+    { name="Binco's Clothing Shop", color=47, id=73, x=123.64656829834,   y=-219.440338134766, z=54.5578384399414},
+    { name="Binco's Clothing Shop", color=47, id=73, x=1696.29187011719,  y=4829.3125,         z=42.0631141662598},
+    { name="Binco's Clothing Shop", color=47, id=73, x=618.093444824219,  y=2759.62939453125,  z=42.0881042480469},
+    { name="Binco's Clothing Shop", color=47, id=73, x=1190.55017089844,  y=2713.44189453125,  z=38.2226257324219},
+    { name="Binco's Clothing Shop", color=47, id=73, x=-1193.42956542969, y=-772.262329101563, z=17.3244285583496},
+    { name="Binco's Clothing Shop", color=47, id=73, x=-3172.49682617188, y=1048.13330078125,  z=20.8632030487061},
+    { name="Binco's Clothing Shop", color=47, id=73, x=-1108.44177246094, y=2708.92358398438,  z=19.1078643798828},
 }
 
 
@@ -143,9 +143,11 @@ function IsInVehicle()
     return IsPedSittingInAnyVehicle(player)
 end
 
+-- Buy new clothes !
+function BuyItem(item, values)
+    -- Buy new clothes !
+    TriggerServerEvent("clothing_shop:SaveItem_server", item, values)
 
-function BuyItem()
-    --TriggerServerEvent("NEW SIGNAL", 2)
 end
 
 
@@ -183,6 +185,7 @@ function skinMenu:getDrawableList(component)
         end
         list[i].onClick         = function()
             skinMenu:saveItem( skinMenu.currentmenu, i, skinMenu.menu[skinMenu.currentmenu].userSelectVariation )
+            BuyItem({collection = "component", id = cmp}, {value = i, texture_value = skinMenu.menu[skinMenu.currentmenu].userSelectVariation})
         end
         list[i].onLeft          = function()
             if skinMenu.menu[skinMenu.currentmenu].userSelectVariation > 0 then
@@ -252,7 +255,6 @@ function skinMenu:saveItem(menuId, value, value_texture)
         value = value,
         value_texture = value_texture
     }
-    TriggerServerEvent("clothesShop:saveItem", item)
 end
 
 
@@ -280,7 +282,7 @@ skinMenu:setMenu( "main","Clothes",{ {
     onBack = function() return false end
 }, {
     id="pantmenu",
-    name = "Pantalons",
+    name = "Pants",
     description = "",
     onClick= function()
         skinMenu:toMenu("pant")
@@ -291,7 +293,7 @@ skinMenu:setMenu( "main","Clothes",{ {
     onBack = function() return false end
 }, {
     id="shoeMenu",
-    name = "Chaussures",
+    name = "Shoes",
     description = "",
     onClick= function()
         skinMenu:toMenu("shoe")
@@ -302,7 +304,7 @@ skinMenu:setMenu( "main","Clothes",{ {
     onBack = function() return false end
 }, {
     id="accessory1Main",
-    name = "Kevlar (skin)",
+    name = "Vests",
     description = "",
     onClick= function()
         skinMenu:toMenu("accessory1")
@@ -313,7 +315,7 @@ skinMenu:setMenu( "main","Clothes",{ {
     onBack = function() return false end
 }, {
     id="accessory2Main",
-    name = "Sacs",
+    name = "Bags",
     description = "",
     onClick= function()
         skinMenu:toMenu("accessory2")
@@ -324,7 +326,7 @@ skinMenu:setMenu( "main","Clothes",{ {
     onBack = function() return false end
 }, {
     id="exit",
-    name = "Quitter",
+    name = "Close",
     description = "",
     onClick= function()
         skinMenu:close()
@@ -338,7 +340,7 @@ skinMenu:setMenu( "main","Clothes",{ {
 skinMenu:setMenu( "head", "Head", {
     {
         id="hair",
-        name = "Cheveux",
+        name = "Hair",
         description = "",
         onClick = function()
             skinMenu:toMenu("hair")
@@ -351,7 +353,7 @@ skinMenu:setMenu( "head", "Head", {
         end
     },  {
         id="face",
-        name = "Visage",
+        name = "Face",
         description = "",
         onClick = function()
             skinMenu:toMenu("face")
