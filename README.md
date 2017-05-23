@@ -1,16 +1,16 @@
 # es_clothingShop
 
-# WORK IN PROGRESS
+# Caution: WORK IN PROGRESS
 
 > The best Clothing Shop Mod ever created for FiveM 
 
 
 
-# Requirements
+## Requirements
 - EssentialMode 2.X
 - MySQL
 
-# How To Install
+## How To Install
 
-# API
+## API
 
