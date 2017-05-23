@@ -119,17 +119,18 @@ RegisterServerEvent("clothing_shop:SetItems_server")
 end)
 
 RegisterServerEvent("clothing_shop:SaveItem_server")
-AddEventHandler("clothing_shop:SetItems_servers",function(item, values)
+AddEventHandler("clothing_shop:SaveItem_server",function(item, values)
 	TriggerEvent('es:getPlayerFromId', source, function(user)
 		local player = user.identifier
-		local executed_query = MySQL:executeQuery(
-		"INSERT INTO user_clothes( ('@name'), ('@texture_name') ) VALUES ('@value'), ('@texture_value') WHERE identifier = ('@identifier')", { ['@name'] = giveColumnName(item.collection, item.id),
-		['@texture_name'] = giveColumnName(item.collection, item.id)..'_texture',
-		['@value'] = values.value,
-		['@texture_value'] = values.texture_value,
-		['@identifier'] = player,
-		
-		})
+		local name = giveColumnName(item.collection, item.id)
+		MySQL:executeQuery("UPDATE user_clothes SET '@name' = '@value', '@texture_name' = '@texture_value' WHERE identifier = '@identifier'",{ 
+			   ['@name'] = name,
+			   ['@texture_name'] = name..'_texture',
+			   ['@value'] = values.value,
+			   ['@texture_value'] = values.texture_value,
+			   ['@identifier'] = player	
+		    }
+		)
 		--local result = MySQL:getResults(executed_query, SQL_COLUMNS, "identifier")
 		--TriggerClientEvent("clothing_shop:loadItems_client", source, result[1])
 	end)
