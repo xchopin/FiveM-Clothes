@@ -2,9 +2,7 @@
 
 # Caution: WORK IN PROGRESS
 
-> The best Clothing Shop Mod ever created for FiveM 
-
-
+> The best clothing shop plugin for FiveM
 
 ## Requirements
 - EssentialMode 2.X
