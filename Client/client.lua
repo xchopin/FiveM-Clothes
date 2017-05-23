@@ -25,30 +25,32 @@ end)
 
 
 function LoadItems(items)
-    local playerPed = GetPlayerPed(-1)
     if (items ~= nil) then
-        print('CLOTHING_SHOP_MESSAGE: ITEMS LOADED')
         setSkin(items.skin)
+        -- SetPedComponentVariation(GetPlayerPed(-1), 0, tonumber(items.face), tonumber(items.face_texture),0)
+        ---- SetPedComponentVariation(GetPlayerPed(-1), 1, items.mask, items.mask_texture,2)
+        -- SetPedComponentVariation(GetPlayerPed(-1), 2, tonumber(items.hair), tonumber(items.hair_texture), 0)
+        -- --SetPedComponentVariation(GetPlayerPed(-1), 3, items.gloves, items.gloves_texture, 2)
+        -- SetPedComponentVariation(GetPlayerPed(-1), 4, tonumber(items.pants), tonumber(items.pants_texture), 0)
+        ---- SetPedComponentVariation(GetPlayerPed(-1), 5, items.bag, items.bag_texture, 2)
+        -- SetPedComponentVariation(GetPlayerPed(-1), 6, tonumber(items.shoes), tonumber(items.shoes_texture), 0)
+        -- SetPedComponentVariation(GetPlayerPed(-1), 8, tonumber(items.shirt), tonumber(items.shirt_texture), 0)
+        -- --SetPedComponentVariation(GetPlayerPed(-1), 9, items.vest, items.vest_texture,2)
+        -- SetPedComponentVariation(GetPlayerPed(-1), 11, tonumber(items.jacket), tonumber(items.jacket_texture),0)
         setItem("component", 0, items.face, items.face_texture)
-         SetPedComponentVariation(GetPlayerPed(-1), 0, items.face, items.face_texture, 2)
-         SetPedComponentVariation(GetPlayerPed(-1), 2, items.hair, items.hair_texture,2)
-         SetPedComponentVariation(GetPlayerPed(-1), 6, items.shoes, items.shoes_texture, 2)
-            --    SetPedComponentVariation(GetPlayerPed(-1), 11, 7, 2, 2)
-       -- setItem("component", 3, items.gloves, items.gloves_texture
-     --   setItem("component", 0, items.face, items.face_texture)
-     --   setItem("component", 1, items.mask, items.mask_texture)
-     --   setItem("component", 2, items.hair, items.hair_texture)
-     --   setItem("component", 3, items.gloves, items.gloves_texture)
-     --   setItem("component", 4, items.pants, items.pants_texture)
-     --   setItem("component", 5, items.bag, items.bag_texture)
-     --   setItem("component", 6, items.shoes, items.shoes_texture)
-     --   setItem("component", 8, items.shirt, items.shirt_texture)
-     --   setItem("component", 9, items.vest, items.vest_texture)
-     --   setItem("component", 11, items.jacket, items.jacket_texture)
+        setItem("component", 1, items.mask, items.mask_texture)
+        setItem("component", 2, items.hair, items.hair_texture)
+        setItem("component", 3, items.gloves, items.gloves_texture)
+        setItem("component", 4, items.pants, items.pants_texture)
+        setItem("component", 5, items.bag, items.bag_texture)
+        setItem("component", 6, items.shoes, items.shoes_texture)
+        setItem("component", 8, items.shirt, items.shirt_texture)
+        setItem("component", 9, items.vest, items.vest_texture)
+        setItem("component", 11, items.jacket, items.jacket_texture)
         -- Props (accessories that can fall) --
-        -- setItem("prop", 0, items.hat, items.hat_texture)
-        -- setItem("prop", 1, items.glasses, items.glasses_texture)
-        -- setItem("prop", 2, items.ears, items.ears_texture)
+        --setItem("prop", 0, items.hat, items.hat_texture)
+        --setItem("prop", 1, items.glasses, items.glasses_texture)
+        --setItem("prop", 2, items.ears, items.ears_texture)
     else
         print('CLOTHING_SHOP_EXCEPTION: TRIED TO LOAD ITEMS\'S CLIENT BUT WERE NULL | MIGHT BE THEIR FIRST CONNECTION')
         setSkin("mp_m_freemode_01") -- I hope the feminists are not gonna argue lol
@@ -91,13 +93,13 @@ end
 ---- Vests     |    9       --             |            --
 ---- Jackets   |   11       --             |            --
 ----------------------------------------------------------
-function setItem(location, part, value, texture_value)
-    if (part ~= nil and value ~= nil and texture_value ~= nil and location ~= nil) then
-        if (location == "component") then
-            SetPedComponentVariation(GetPlayerPed(-1), part, value, texture_value, 2)
+function setItem(type, part, value, texture_value)
+    if (part ~= nil and value ~= nil and texture_value ~= nil and type ~= nil) then
+        if (type == "component") then
+            SetPedComponentVariation(GetPlayerPed(-1), part, tonumber(value), tonumber(texture_value), 0)
         else
-            if (location == "prop") then
-                SetPedPropIndex(GetPlayerPed(-1), part, value, texture_value, 2)
+            if (type == "prop") then
+                SetPedPropIndex(GetPlayerPed(-1), part, tonumber(value), tonumber(texture_value), 0)
             end
         end
     end
@@ -288,7 +290,7 @@ skinMenu:setMenu( "main","Clothes",{ {
     onBack = function() return false end
 }, {
     id="pantmenu",
-    name = "Pants",
+    name = "Pantalons",
     description = "",
     onClick= function()
         skinMenu:toMenu("pant")
@@ -299,7 +301,7 @@ skinMenu:setMenu( "main","Clothes",{ {
     onBack = function() return false end
 }, {
     id="shoeMenu",
-    name = "Shoes",
+    name = "Chaussures",
     description = "",
     onClick= function()
         skinMenu:toMenu("shoe")
@@ -310,7 +312,7 @@ skinMenu:setMenu( "main","Clothes",{ {
     onBack = function() return false end
 }, {
     id="accessory1Main",
-    name = "Vest",
+    name = "Kevlar (skin)",
     description = "",
     onClick= function()
         skinMenu:toMenu("accessory1")
@@ -320,8 +322,8 @@ skinMenu:setMenu( "main","Clothes",{ {
     onSelected= function() return false end,
     onBack = function() return false end
 }, {
-    id="bags",
-    name = "Bags",
+    id="accessory2Main",
+    name = "Sacs",
     description = "",
     onClick= function()
         skinMenu:toMenu("accessory2")
@@ -332,7 +334,7 @@ skinMenu:setMenu( "main","Clothes",{ {
     onBack = function() return false end
 }, {
     id="exit",
-    name = "Exit",
+    name = "Quitter",
     description = "",
     onClick= function()
         skinMenu:close()
@@ -412,21 +414,8 @@ skinMenu:setMenu( "head", "Head", {
         onBack = function()
             skinMenu:toMenu('main')
         end
-    }, 
-    {
-        id="back",
-        name = "Back",
-        description = "",
-        onClick= function()
-            skinMenu:toMenu("main")
-        end,
-        onLeft= function() return false end,
-        onRight= function() return false end,
-        onSelected= function() return false end,
-        onBack = function() return false end
- }, false )
-
-
+    }
+}, false )
 
 skinMenu:setMenu( "glasses", "Glasses", function() return skinMenu:getPropList(1) end, true )
 skinMenu:setMenu( "helmet", "Hats", function() return skinMenu:getPropList(0) end, true )
@@ -472,19 +461,8 @@ skinMenu:setMenu( "body", "Body", {
         onBack = function()
             skinMenu:toMenu('main')
         end
-    }, 
-    {
-        id="back",
-        name = "Back",
-        description = "",
-        onClick= function()
-            skinMenu:toMenu("main")
-        end,
-        onLeft= function() return false end,
-        onRight= function() return false end,
-        onSelected= function() return false end,
-        onBack = function() return false end
- }, false )
+    },
+}, false )
 
 skinMenu:setMenu( "face", "Face", function() return skinMenu:getDrawableList(0) end , true )
 skinMenu:setMenu( "hair", "Hair", function() return skinMenu:getDrawableList(2) end , true )
@@ -504,7 +482,6 @@ Citizen.CreateThread(function()
     for _, item in pairs(clothingShops) do
         item.blip = AddBlipForCoord(item.x, item.y, item.z)
         SetBlipSprite(item.blip, item.id)
-        SetBlipSprite(item.blip, item.colour)
         SetBlipAsShortRange(item.blip, true)
         BeginTextCommandSetBlipName("STRING")
         AddTextComponentString(item.name)
@@ -525,4 +502,3 @@ Citizen.CreateThread(function()
         Citizen.Wait(0)
     end
 end)
-
