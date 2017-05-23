@@ -14,14 +14,46 @@ AddEventHandler('playerSpawned', function(spawn)
     --TriggerServerEvent("item:getItems")
 end)
 
-RegisterNetEvent("clothing_shop:loadSkin_client")
-AddEventHandler("clothing_shop:loadSkin_client",function(skin)
-    LoadSkin(skin)
+RegisterNetEvent("clothing_shop:loadItems_client")
+AddEventHandler("clothing_shop:loadItems_client",function(items)
+    SetAllClientsItems(items)
 end)
 
 AddEventHandler('onPlayerDied', function()
     TriggerServerEvent("clothing_shop:SpawnPlayer_server")
 end)
+
+
+function SetAllClientItems(items)
+    local playerPed = GetPlayerPed(-1)
+    if (items ~= nil) then
+        setSkin(items.skin)  
+        setItem("component", 0, items.face, items.face_texture)
+        setItem("component", 1, items.mask, items.mask_texture)
+        setItem("component", 2, items.hair, items.hair_texture)
+        setItem("component", 3, items.gloves, items.gloves_texture)
+        setItem("component", 4, items.pants, items.pants_texture)
+        setItem("component", 5, items.bag, items.bag_texture)
+        setItem("component", 6, items.shoes, items.shoes_texture)
+        setItem("component", 8, items.shirt, items.shirt_texture)
+        setItem("component", 9, items.vest, items.vest_texture)
+        setItem("component", 11, items.jacket, items.jacket_texture)
+        -- Props (accessories that can fall) --
+        setItem("prop", 0, items.hat, items.hat_texture)
+        setItem("prop", 1, items.glasses, items.glasses_texture)
+        setItem("prop", 2, items.ears, items.ears_texture)
+    else
+        print('CLOTHING_SHOP_EXCEPTION: TRIED TO LOAD ITEMS\'S CLIENT BUT WERE NULL | MIGHT BE THEIR FIRST CONNECTION')
+        setSkin("mp_m_freemode_01") -- I hope the feminists are not gonna argue lol
+        SetPedComponentVariation(GetPlayerPed(-1), 0, 0, 0, 2) 
+        SetPedComponentVariation(GetPlayerPed(-1), 2, 11, 4, 2) 
+        SetPedComponentVariation(GetPlayerPed(-1), 4, 1, 5, 2) 
+        SetPedComponentVariation(GetPlayerPed(-1), 6, 1, 0, 2) 
+        SetPedComponentVariation(GetPlayerPed(-1), 11, 7, 2, 2) 
+    end    
+
+    SetModelAsNoLongerNeeded(modelhashed)
+end
 
 -- Sets skin's client
 function setSkin(skin)
@@ -34,41 +66,12 @@ function setSkin(skin)
     SetPlayerModel(PlayerId(), modelhashed)
 end
 
-function SetAllClientItems(items)
-    local playerPed = GetPlayerPed(-1)
-    if (items ~= nil) then
-        setSkin(items.skin)  
-        setItem("component", 0, items.face, items.face_texture)
-        setItem("component", 2, items.hair, items.hair_texture)
-        setItem("component", 8, items.shirt, items.shirt_texture)
-        setItem("component", 4, items.pants, items.pants_texture)
-        setItem("component", 6, items.shoes, items.shoes_texture)
-        setItem("component", 9, items.vest, items.vest_texture)
-        setItem("component", 5, items.bag, items.bag_texture)
-        setItem("prop", 0, items.hat, items.hat_texture)
-        setItem("component", 1, items.mask, items.mask_texture)
-        setItem("prop", 1, items.glasses, items.glasses_texture)
-        setItem("component", 3, items.gloves, items.gloves_texture)
-        setItem("component", 11, items.jacket, items.jacket_texture)
-        setItem("prop", 2, items.ears, items.ears_texture)
-    else
-     print('CLOTHING_SHOP_EXCEPTION: TRIED TO LOAD ITEMS\'S CLIENT BUT WERE NULL')
-     SetPedComponentVariation(playerPed, 0, 0, 0, 2) --Face
-     SetPedComponentVariation(playerPed, 2, 11, 4, 2) --Hair 
-     SetPedComponentVariation(playerPed, 4, 1, 5, 2) -- Pantalon
-     SetPedComponentVariation(playerPed, 6, 1, 0, 2) -- Shoes
-     SetPedComponentVariation(playerPed, 11, 7, 2, 2) -- Jacket
-    end    
-
-    SetModelAsNoLongerNeeded(modelhashed)
-
-end
 
 -- Set an item on client's character
 ----------------------------------------------------------
 ---- TYPE = "component"     --      TYPE = "prop"       --
 ----------------------------------------------------------
----- NAME      |  Part      ---- NAME      |  part      --
+---- NAME      |  part      --   NAME      |  part      --
 ----------------------------------------------------------
 ---- Face      |    0       --  Hats       |     0      -- 
 ---- Mask      |    1       --  Glasses    |     1      -- 
