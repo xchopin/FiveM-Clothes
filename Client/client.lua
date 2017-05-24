@@ -10,7 +10,7 @@ AddEventHandler('playerSpawned', function(spawn)
         TriggerServerEvent("clothing_shop:SpawnPlayer_server")
         firstspawn = 1
     end
-    --TriggerServerEvent("weaponshop:playerSpawned",a)
+    TriggerServerEvent("weaponshop:playerSpawned", "")
     --TriggerServerEvent("item:getItems")
 end)
 
@@ -34,10 +34,10 @@ function ChangeGender(skin)
     if skin == "mp_m_freemode_01" then
         newSkin = "mp_f_freemode_01"
         setSkin(newSkin)
-    else 
+    else
         newSkin = "mp_m_freemode_01"
         setSkin(newSkin)
-    end    
+    end
 
     BuyItem({collection = "skin"}, {value = newSkin })
     -- Reset clothes
@@ -46,6 +46,11 @@ function ChangeGender(skin)
     SetPedComponentVariation(GetPlayerPed(-1), 4, 1, 5, 2)
     SetPedComponentVariation(GetPlayerPed(-1), 6, 1, 0, 2)
     SetPedComponentVariation(GetPlayerPed(-1), 11, 7, 2, 2)
+    SaveItem({collection = "component", id= 0}, {value = 0, texture_value = 0 })
+    SaveItem({collection = "component", id= 2}, {value = 11, texture_value = 4 })
+    SaveItem({collection = "component", id= 4}, {value = 1, texture_value = 5 })
+    SaveItem({collection = "component", id= 6}, {value = 1, texture_value = 0 })
+    SaveItem({collection = "component", id= 11}, {value = 7, texture_value = 2 })
 end
 
 function LoadItems(items)
@@ -107,6 +112,8 @@ end
 ---- Vests     |    9       --             |            --
 ---- Jackets   |   11       --             |            --
 ----------------------------------------------------------
+
+
 function setItem(type, part, value, texture_value)
     if (part ~= nil and value ~= nil and texture_value ~= nil and type ~= nil) then
         if (type == "component") then
@@ -155,7 +162,7 @@ function IsNearShop()
             DrawMarker(1, item.x, item.y, item.z-1, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 39, 221, 39, 0, 0, 2, 0, 0, 0, 0)
         end
         if(distance < 2) then
-            DisplayHelpText('Press ~INPUT_CONTEXT~ to buy new ~g~clothes',0,1,0.5,0.8,0.6,255,255,255,255)
+            DisplayHelpText('Press ~INPUT_CONTEXT~ to open the ~g~shop',0,1,0.5,0.8,0.6,255,255,255,255)
             return true
         end
     end
@@ -170,8 +177,11 @@ end
 -- Buy new clothes !
 function BuyItem(item, values)
     -- Buy new clothes !
-    TriggerServerEvent("clothing_shop:SaveItem_server", item, values)
+    TriggerServerEvent("clothing_shop:SaveItem_server", item, values)   
+end
 
+function SaveItem(item, values)
+    TriggerServerEvent("clothing_shop:SaveItem_server", item, values)
 end
 
 
@@ -215,6 +225,7 @@ function skinMenu:getDrawableList(component)
             if skinMenu.menu[skinMenu.currentmenu].userSelectVariation > 0 then
                 skinMenu:setCurrentVariation("left", skinMenu.currentmenu)
                 SetPedComponentVariation(GetPlayerPed(-1), cmp, i, skinMenu.menu[skinMenu.currentmenu].userSelectVariation, 4)
+
             end
         end
         list[i].onRight         = function()
@@ -239,7 +250,7 @@ function skinMenu:getPropList(prop)
     for i = 0, GetNumberOfPedPropDrawableVariations(GetPlayerPed(-1), prop) do
         local cmp               = prop
         list[i]                 = {}
-        list[i].name            = "Item n°".. i
+        list[i].name            = "Item #".. i
         list[i].id              = i
         if GetNumberOfPedPropTextureVariations(GetPlayerPed(-1), cmp, i) ~= nil then
             list[i].max         = GetNumberOfPedPropTextureVariations(GetPlayerPed(-1), cmp, i) - 1
@@ -249,6 +260,7 @@ function skinMenu:getPropList(prop)
 
         list[i].onClick         = function()
             skinMenu:saveItem(skinMenu.currentmenu, i,  skinMenu.menu[skinMenu.currentmenu].userSelectVariation)
+            BuyItem({collection = "prop", id = cmp}, {value = i, texture_value = skinMenu.menu[skinMenu.currentmenu].userSelectVariation})
         end
         list[i].onLeft          = function()
             if skinMenu.menu[skinMenu.currentmenu].userSelectVariation > 0 then
@@ -284,96 +296,96 @@ end
 
 skinMenu:setMenu( "main","Clothes",{
 
-{
-    id="gender",
-    name = "Change your gender",
-    description = "",
-    onClick = function()
-         TriggerServerEvent("clothing_shop:GetSkin_server")
-    end,
-    onLeft = function() return false end,
-    onRight = function() return false end,
-    onSelected = function() return false end,
-    onBack = function() return false end
-}, 
-{
-    id="head",
-    name = "Head",
-    description = "",
-    onClick = function()
-        skinMenu:toMenu("head")
-    end,
-    onLeft = function() return false end,
-    onRight = function() return false end,
-    onSelected = function() return false end,
-    onBack = function() return false end
-}, {
-    id="body",
-    name = "Body",
-    description = "",
-    onClick= function()
-        skinMenu:toMenu("body")
-    end,
-    onLeft= function() return false end,
-    onRight= function() return false end,
-    onSelected= function() return false end,
-    onBack = function() return false end
-}, {
-    id="pantmenu",
-    name = "Pants",
-    description = "",
-    onClick= function()
-        skinMenu:toMenu("pant")
-    end,
-    onLeft= function() return false end,
-    onRight= function() return false end,
-    onSelected= function() return false end,
-    onBack = function() return false end
-}, {
-    id="shoeMenu",
-    name = "Shoes",
-    description = "",
-    onClick= function()
-        skinMenu:toMenu("shoe")
-    end,
-    onLeft= function() return false end,
-    onRight= function() return false end,
-    onSelected= function() return false end,
-    onBack = function() return false end
-}, {
-    id="accessory1Main",
-    name = "Vests",
-    description = "",
-    onClick= function()
-        skinMenu:toMenu("accessory1")
-    end,
-    onLeft= function() return false end,
-    onRight= function() return false end,
-    onSelected= function() return false end,
-    onBack = function() return false end
-}, {
-    id="accessory2Main",
-    name = "Bags",
-    description = "",
-    onClick= function()
-        skinMenu:toMenu("accessory2")
-    end,
-    onLeft= function() return false end,
-    onRight= function() return false end,
-    onSelected= function() return false end,
-    onBack = function() return false end
-}, {
-    id="exit",
-    name = "Close",
-    description = "",
-    onClick= function()
-        skinMenu:close()
-    end,
-    onLeft= function() return false end,
-    onRight= function() return false end,
-    onSelected= function() return false end,
-    onBack = function() return false end
-} }, false )
+    {
+        id="gender",
+        name = "Changing gender",
+        description = "",
+        onClick = function()
+            TriggerServerEvent("clothing_shop:GetSkin_server")
+        end,
+        onLeft = function() return false end,
+        onRight = function() return false end,
+        onSelected = function() return false end,
+        onBack = function() return false end
+    },
+    {
+        id="head",
+        name = "Head",
+        description = "",
+        onClick = function()
+            skinMenu:toMenu("head")
+        end,
+        onLeft = function() return false end,
+        onRight = function() return false end,
+        onSelected = function() return false end,
+        onBack = function() return false end
+    }, {
+        id="body",
+        name = "Body",
+        description = "",
+        onClick= function()
+            skinMenu:toMenu("body")
+        end,
+        onLeft= function() return false end,
+        onRight= function() return false end,
+        onSelected= function() return false end,
+        onBack = function() return false end
+    }, {
+        id="pantmenu",
+        name = "Pants",
+        description = "",
+        onClick= function()
+            skinMenu:toMenu("pant")
+        end,
+        onLeft= function() return false end,
+        onRight= function() return false end,
+        onSelected= function() return false end,
+        onBack = function() return false end
+    }, {
+        id="shoeMenu",
+        name = "Shoes",
+        description = "",
+        onClick= function()
+            skinMenu:toMenu("shoe")
+        end,
+        onLeft= function() return false end,
+        onRight= function() return false end,
+        onSelected= function() return false end,
+        onBack = function() return false end
+    }, {
+        id="accessory1Main",
+        name = "Vests",
+        description = "",
+        onClick= function()
+            skinMenu:toMenu("accessory1")
+        end,
+        onLeft= function() return false end,
+        onRight= function() return false end,
+        onSelected= function() return false end,
+        onBack = function() return false end
+    }, {
+        id="accessory2Main",
+        name = "Bags",
+        description = "",
+        onClick= function()
+            skinMenu:toMenu("accessory2")
+        end,
+        onLeft= function() return false end,
+        onRight= function() return false end,
+        onSelected= function() return false end,
+        onBack = function() return false end
+    }, {
+        id="exit",
+        name = "Close",
+        description = "",
+        onClick= function()
+            skinMenu:close()
+        end,
+        onLeft= function() return false end,
+        onRight= function() return false end,
+        onSelected= function() return false end,
+        onBack = function() return false end
+    } }, false )
 
 skinMenu:setMenu( "head", "Head", {
     {
@@ -395,6 +407,20 @@ skinMenu:setMenu( "head", "Head", {
         description = "",
         onClick = function()
             skinMenu:toMenu("face")
+        end,
+        onLeft = function() return false end,
+        onRight = function() return false end,
+        onSelected = function() return false end,
+        onBack = function()
+            skinMenu:toMenu('main')
+        end
+    },
+    {
+        id="ears",
+        name = "Ears",
+        description = "",
+        onClick = function()
+            skinMenu:toMenu("ears")
         end,
         onLeft = function() return false end,
         onRight = function() return false end,
