@@ -23,6 +23,30 @@ AddEventHandler('onPlayerDied', function()
     TriggerServerEvent("clothing_shop:SpawnPlayer_server")
 end)
 
+RegisterNetEvent("clothing_shop:getSkin_client")
+AddEventHandler("clothing_shop:getSkin_client",function(skin)
+    ChangeGender(skin)
+end)
+
+-- Change the gender of a player
+function ChangeGender(skin)
+    local newSkin = nil;
+    if skin == "mp_m_freemode_01" then
+        newSkin = "mp_f_freemode_01"
+        setSkin(newSkin)
+    else 
+        newSkin = "mp_m_freemode_01"
+        setSkin(newSkin)
+    end    
+
+    BuyItem({collection = "skin"}, {value = newSkin })
+    -- Reset clothes
+    SetPedComponentVariation(GetPlayerPed(-1), 0, 0, 0, 2)
+    SetPedComponentVariation(GetPlayerPed(-1), 2, 11, 4, 2)
+    SetPedComponentVariation(GetPlayerPed(-1), 4, 1, 5, 2)
+    SetPedComponentVariation(GetPlayerPed(-1), 6, 1, 0, 2)
+    SetPedComponentVariation(GetPlayerPed(-1), 11, 7, 2, 2)
+end
 
 function LoadItems(items)
     if (items ~= nil) then
@@ -258,7 +282,21 @@ function skinMenu:saveItem(menuId, value, value_texture)
 end
 
 
-skinMenu:setMenu( "main","Clothes",{ {
+skinMenu:setMenu( "main","Clothes",{
+
+{
+    id="gender",
+    name = "Change your gender",
+    description = "",
+    onClick = function()
+         TriggerServerEvent("clothing_shop:GetSkin_server")
+    end,
+    onLeft = function() return false end,
+    onRight = function() return false end,
+    onSelected = function() return false end,
+    onBack = function() return false end
+}, 
+{
     id="head",
     name = "Head",
     description = "",
