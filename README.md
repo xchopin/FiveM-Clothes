@@ -9,6 +9,7 @@
 - Remove a cloth
 - Add ears in the menu
 - Add legacy setComponents function (for compatibility with mods using skin_customization such as Cops
+- Reset firstConnection on 1 for users table
 
 ## Requirements
 - EssentialMode 2.X
