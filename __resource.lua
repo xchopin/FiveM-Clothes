@@ -15,6 +15,5 @@ server_script 'Server/server.lua' --
 ------------------------------------
 client_script 'Client/menu.lua'   --
 client_script 'Client/client.lua' --
-client_script 'Client/events.lua' --
 ------------------------------------
 ------------------------------------
