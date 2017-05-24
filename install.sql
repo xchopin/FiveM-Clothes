@@ -1,5 +1,4 @@
 CREATE TABLE IF NOT EXISTS `user_clothes` (
-  `id` int AUTO_INCREMENT,
   `identifier` varchar(255) NOT NULL,
   `skin` varchar(255) NOT NULL DEFAULT 'mp_m_freemode_01',
   `face` varchar(255) NOT NULL DEFAULT '0',
@@ -28,6 +27,6 @@ CREATE TABLE IF NOT EXISTS `user_clothes` (
   `jacket_texture` varchar(255) NOT NULL DEFAULT '0',
   `ears` varchar(255) NOT NULL DEFAULT '0',
   `ears_texture` varchar(255) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`identifier`),
   CONSTRAINT fk_user_clothes FOREIGN KEY(identifier) REFERENCES users(identifier) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
