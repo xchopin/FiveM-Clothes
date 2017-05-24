@@ -123,9 +123,7 @@ AddEventHandler("clothing_shop:SaveItem_server",function(item, values)
 	TriggerEvent('es:getPlayerFromId', source, function(user)
 		local player = user.identifier
 		local name = giveColumnName(item.collection, item.id)
-		MySQL:executeQuery("UPDATE user_clothes SET '@name' = '@value', '@texture_name' = '@texture_value' WHERE identifier = '@identifier'",{ 
-			   ['@name'] = name,
-			   ['@texture_name'] = name..'_texture',
+		MySQL:executeQuery("UPDATE user_clothes SET ".. name .." = '@value', ".. name..'_texture' .." = '@texture_value' WHERE identifier = '@identifier'",{ 
 			   ['@value'] = values.value,
 			   ['@texture_value'] = values.texture_value,
 			   ['@identifier'] = player	
