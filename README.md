@@ -44,7 +44,7 @@ $ mysql> ./install.sql
 $ cp Server/settings.lua.dist settings.lua
 ```
 
-### 5. Add the dependency to your .yml
+### 4. Add the dependency to your .yml
 
 
 ## Gameplay
@@ -72,7 +72,8 @@ $ cp Server/settings.lua.dist settings.lua
 
 #### Get the skin model of a player
 ``` lua
-clothing_shop:GetSkin_server -- Give the skin of a player in client (gives the value from the DB)
+ -- Give the client'skin model (gives the value from the DB)
+clothing_shop:GetSkin_server
 ```
 
 #### Save the items of a player
@@ -86,6 +87,7 @@ clothing_shop:GetSkin_server -- Give the skin of a player in client (gives the v
 clothing_shop:SaveItem_server({item.collection, item.id}, {values.value, values.texture_value})
 ```
 
+### Client Events
 ``` lua
 -- Change the gender, might change the name of this one lol
 -- @param skin: must be "mp_m_freemode_01" or "mp_m_freemode_01"
