@@ -1,6 +1,9 @@
 # FiveM: Clothing Shops addon
 > Your clothing shop addon for FiveM.
 
+
+<img src=http://i.imgur.com/bB1K7ug.jpg>
+
 ## Caution: work in progress
 
 ## Requirements
@@ -22,6 +25,7 @@
 - Payment
 - Remove a cloth
 - Setter and getter on each component
+- More events for developers
 
 ## Getting Started
 
@@ -64,6 +68,36 @@ $ cp Server/settings.lua.dist settings.lua
 | Jackets   |   11  |
 
 
+### Server Events
 
+#### Get the skin model of a player
+``` lua
+clothing_shop:GetSkin_server -- Give the skin of a player in client (gives the value from the DB)
+```
+
+#### Save the items of a player
+``` lua
+-- Updates the DBMS
+-- @param item.collection: skin or prop or component
+-- @param item.id (check the table), not required if collection == skin
+-- @param item.value 
+-- @param item.texture_value can be empty if collection == skin
+
+clothing_shop:SaveItem_server({item.collection, item.id}, {values.value, values.texture_value})
+```
+
+``` lua
+-- Change the gender, might change the name of this one lol
+-- @param skin: must be "mp_m_freemode_01" or "mp_m_freemode_01"
+clothing_shop:getSkin_client(skin)
+``` 
+``` lua
+-- Set all the items on a player
+-- @param items: JSON format, needs all the columns elements
+
+clothing_shop:loadItems_client(items)
+```
+
+*More events in the next released*
 
 _Thanks to JCPires for his help on the menu design._
