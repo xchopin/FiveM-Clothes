@@ -12,7 +12,7 @@
 
 ## Requirements
 - EssentialMode 2.X
-- MySQL
+- MySQL or MariaDB (_not tested_)
 
 ## Features
 - Fast loading
@@ -23,7 +23,23 @@
 - Elegant menu
 - A lot of accessories
 
-## How To Install
+## Getting Started
+
+### 1. Clone the repository
+``` bash
+$ git clone https://github.com/xchopin/es_clothingShop.git
+```
+
+### 2. Import the SQL file into your DBMS
+``` bash
+$ mysql> ./install.sql
+```
+
+### 3. Create your settings file (and fill the fields)
+``` bash
+$ cp Server/settings.lua.dist settings.lua
+```
+
 
 ## API
 
