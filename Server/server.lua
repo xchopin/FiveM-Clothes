@@ -1,5 +1,5 @@
 require "resources/essentialmode/lib/MySQL"
-MySQL:open("127.0.0.1", "gta5_gamemode_essential", "root", "Nadoreevax_5$")
+MySQL:open("127.0.0.1", "gta5_gamemode_essential", "root", "root")
 
 
 local SQL_COLUMNS = {
