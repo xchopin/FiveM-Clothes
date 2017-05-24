@@ -5,7 +5,6 @@
 
 ## ToDo
 - Withdraw
-- Select the gender
 - Remove a cloth
 - Add ears in the menu
 - Add legacy setComponents function (for compatibility with mods using skin_customization such as Cops
@@ -23,6 +22,7 @@
 - Marker in shops
 - Elegant menu
 - A lot of accessories
+- Choice of the gender
 
 ## Getting Started
 
