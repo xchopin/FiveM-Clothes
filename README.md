@@ -98,6 +98,6 @@ clothing_shop:getSkin_client(skin)
 clothing_shop:loadItems_client(items)
 ```
 
-*More events in the next released*
+*More events in the next release*
 
 _Thanks to JCPires for his help on the menu design._
