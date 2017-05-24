@@ -1,6 +1,11 @@
-require "resources/essentialmode/lib/MySQL"
-MySQL:open("127.0.0.1", "gta5_gamemode_essential", "root", "root")
+---------------------------------------------------------------------------------------
+--                     Author: Xavier CHOPIN <www.github.com/xchopin>                --
+--                                 License: Apache 2.0                               --
+---------------------------------------------------------------------------------------
 
+require "resources/essentialmode/lib/MySQL"
+local settings = "resources/es_clothingShop/Server/settings.lua"
+MySQL:open(settings.host, settings.db, settings.name, settings.password)
 
 local SQL_COLUMNS = {
     'skin',
@@ -33,9 +38,9 @@ local SQL_COLUMNS = {
 }
 
 -- Gives you the column name for a collection and id given
--- collection can be "skin", valueId can be null)
--- 					 "component", requires a valueId
--- 					 "prop", requires a valueId
+-- collection can be : - "skin", valueId can be null)
+-- 		       - "component", requires a valueId
+-- 		       - "prop", requires a valueId
 function giveColumnName(collection, valueId)
     local res = nil
     if (collection == "skin") then
