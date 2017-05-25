@@ -1,3 +1,4 @@
+-- SQL FILE FOR THOSE WHO GET IN TROUBLE WITH FOREIGN KEYS
 CREATE TABLE IF NOT EXISTS `user_clothes` (
   `identifier` varchar(255) NOT NULL,
   `skin` varchar(255) NOT NULL DEFAULT 'mp_m_freemode_01',
@@ -27,8 +28,7 @@ CREATE TABLE IF NOT EXISTS `user_clothes` (
   `jacket_texture` varchar(255) NOT NULL DEFAULT '2',
   `ears` varchar(255) NOT NULL DEFAULT '1',
   `ears_texture` varchar(255) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`identifier`),
-  CONSTRAINT fk_user_clothes FOREIGN KEY(identifier) REFERENCES users(identifier) ON DELETE CASCADE
+  PRIMARY KEY (`identifier`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 UPDATE users SET isFirstConnection = 1;
