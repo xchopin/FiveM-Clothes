@@ -24,7 +24,6 @@
 ## ToDo
 - Payment
 - Remove a cloth
-- Setter and getter on each component
 - More events for developers
 
 ## Getting Started
@@ -36,8 +35,9 @@ $ git clone https://github.com/xchopin/FiveM_ClothingShop.git
 
 ### 2. Import the SQL file into your DBMS
 ``` bash
-$ mysql> ./install.sql
+$ mysql> ./install.sql # or ./ugly_install.sql if you get in trouble with foreign keys
 ```
+
 
 ### 3. Create your settings file (and fill the fields)
 ``` bash
