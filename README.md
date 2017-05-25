@@ -13,7 +13,7 @@
 ## Features
 - Load skin on spawn/death
 - Fast loading
-- Buy new clothes (it will also updates in the DBMS)
+- Buy new clothes (it will also update in your DBMS)
 - Blips on the map
 - Marker in shops
 - Elegant menu
