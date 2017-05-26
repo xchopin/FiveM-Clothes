@@ -5,13 +5,67 @@
 
 local firstspawn = 0
 
+local lang = 'en'
+
+local txt = {
+  ['en'] = {
+        ['title'] = 'Binco Shop',
+        ['gender'] = 'Changing gender',
+        ['head'] = 'Header',
+        ['body'] = 'Body',
+        ['pants'] = 'Pants',
+        ['shoes'] = 'Shoes',
+        ['vests'] = 'Vests',
+        ['bags'] = 'Bags',
+        ['close'] = 'Close',
+        ['hair'] = 'Hair',
+        ['face'] = 'Face',
+        ['ears'] = 'Ears',
+        ['glasses'] = 'Glasses',
+        ['masks'] = "Masks",
+        ['hats'] = "Hats",
+        ['gloves'] = "Arms and gloves",
+        ['shirts'] = "Shirts",
+        ['jackets'] = "Jackets",
+        ['message'] = "Press ~INPUT_CONTEXT~ to ~g~shop for clothes",
+        ['close'] = "Close"
+  },
+
+    ['fr'] = {
+        ['title'] = 'Nouveau look',
+        ['gender'] = 'Changer de genre',
+        ['head'] = 'Tete',
+        ['body'] = 'Corps',
+        ['pants'] = 'Pantalon',
+        ['shoes'] = 'Chaussures',
+        ['vests'] = 'Kevlar',
+        ['bags'] = 'Sacs',
+        ['close'] = 'Fermer',
+        ['hair'] = 'Cheveux',
+        ['face'] = 'Visages',
+        ['ears'] = 'Accessoires oreilles',
+        ['glasses'] = 'Début du service',
+        ['masks'] = "Masques",
+        ['hats'] = "Chapeaux",
+        ['gloves'] = "Bras et gants",
+        ['shirts'] = "Haut",
+        ['jackets'] = "Vestes",
+        ['message'] = "Appuyez sur ~INPUT_CONTEXT~ pour faire des ~g~achats",
+        ['close'] = "Fermer"
+  },
+}
+
+
+local isLeaving = false
+
 AddEventHandler('playerSpawned', function(spawn)
     if firstspawn == 0 then
         TriggerServerEvent("clothing_shop:SpawnPlayer_server")
         firstspawn = 1
     end
-    TriggerServerEvent("weaponshop:playerSpawned", "")
     --TriggerServerEvent("item:getItems")
+    local a = "" -- nil doesnt work
+    TriggerServerEvent("weaponshop:playerSpawned", a)
 end)
 
 RegisterNetEvent("clothing_shop:loadItems_client")
@@ -162,7 +216,7 @@ function IsNearShop()
             DrawMarker(1, item.x, item.y, item.z-1, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 39, 221, 39, 0, 0, 2, 0, 0, 0, 0)
         end
         if(distance < 2) then
-            DisplayHelpText('Press ~INPUT_CONTEXT~ to open the ~g~shop',0,1,0.5,0.8,0.6,255,255,255,255)
+            DisplayHelpText(txt[lang]['message'],0,1,0.5,0.8,0.6,255,255,255,255)
             return true
         end
     end
@@ -187,7 +241,7 @@ end
 
 local skinOptions = {
     open = false,
-    title = "New style",
+    title = "Categories",
     currentmenu = "main",
     lastmenu = "main",
     currentpos = nil,
@@ -220,6 +274,7 @@ function skinMenu:getDrawableList(component)
         list[i].onClick         = function()
             skinMenu:saveItem( skinMenu.currentmenu, i, skinMenu.menu[skinMenu.currentmenu].userSelectVariation )
             BuyItem({collection = "component", id = cmp}, {value = i, texture_value = skinMenu.menu[skinMenu.currentmenu].userSelectVariation})
+            
         end
         list[i].onLeft          = function()
             if skinMenu.menu[skinMenu.currentmenu].userSelectVariation > 0 then
@@ -250,7 +305,7 @@ function skinMenu:getPropList(prop)
     for i = 0, GetNumberOfPedPropDrawableVariations(GetPlayerPed(-1), prop) do
         local cmp               = prop
         list[i]                 = {}
-        list[i].name            = "Item #".. i
+        list[i].name            = "Item n°".. i
         list[i].id              = i
         if GetNumberOfPedPropTextureVariations(GetPlayerPed(-1), cmp, i) ~= nil then
             list[i].max         = GetNumberOfPedPropTextureVariations(GetPlayerPed(-1), cmp, i) - 1
@@ -294,11 +349,11 @@ function skinMenu:saveItem(menuId, value, value_texture)
 end
 
 
-skinMenu:setMenu( "main","Clothes",{
+skinMenu:setMenu( "main",txt[lang]['title'],{
 
     {
         id="gender",
-        name = "Changing gender",
+        name = txt[lang]['gender'],
         description = "",
         onClick = function()
             TriggerServerEvent("clothing_shop:GetSkin_server")
@@ -310,7 +365,7 @@ skinMenu:setMenu( "main","Clothes",{
     },
     {
         id="head",
-        name = "Head",
+        name = txt[lang]['head'],
         description = "",
         onClick = function()
             skinMenu:toMenu("head")
@@ -321,7 +376,7 @@ skinMenu:setMenu( "main","Clothes",{
         onBack = function() return false end
     }, {
         id="body",
-        name = "Body",
+        name = txt[lang]['body'],
         description = "",
         onClick= function()
             skinMenu:toMenu("body")
@@ -332,7 +387,7 @@ skinMenu:setMenu( "main","Clothes",{
         onBack = function() return false end
     }, {
         id="pantmenu",
-        name = "Pants",
+        name = txt[lang]['pants'],
         description = "",
         onClick= function()
             skinMenu:toMenu("pant")
@@ -343,7 +398,7 @@ skinMenu:setMenu( "main","Clothes",{
         onBack = function() return false end
     }, {
         id="shoeMenu",
-        name = "Shoes",
+        name = txt[lang]['shoes'],
         description = "",
         onClick= function()
             skinMenu:toMenu("shoe")
@@ -354,7 +409,7 @@ skinMenu:setMenu( "main","Clothes",{
         onBack = function() return false end
     }, {
         id="accessory1Main",
-        name = "Vests",
+        name = txt[lang]['vests'],
         description = "",
         onClick= function()
             skinMenu:toMenu("accessory1")
@@ -365,7 +420,7 @@ skinMenu:setMenu( "main","Clothes",{
         onBack = function() return false end
     }, {
         id="accessory2Main",
-        name = "Bags",
+        name = txt[lang]['bags'],
         description = "",
         onClick= function()
             skinMenu:toMenu("accessory2")
@@ -376,10 +431,12 @@ skinMenu:setMenu( "main","Clothes",{
         onBack = function() return false end
     }, {
         id="exit",
-        name = "Close",
+        name = txt[lang]['close'],
         description = "",
         onClick= function()
             skinMenu:close()
+            isLeaving = false
+            TriggerServerEvent("clothing_shop:SpawnPlayer_server") -- Validate the choices ;)
         end,
         onLeft= function() return false end,
         onRight= function() return false end,
@@ -387,10 +444,10 @@ skinMenu:setMenu( "main","Clothes",{
         onBack = function() return false end
     } }, false )
 
-skinMenu:setMenu( "head", "Head", {
+skinMenu:setMenu( "head", txt[lang]['head'], {
     {
         id="hair",
-        name = "Hair",
+        name = txt[lang]['hair'],
         description = "",
         onClick = function()
             skinMenu:toMenu("hair")
@@ -403,7 +460,7 @@ skinMenu:setMenu( "head", "Head", {
         end
     },  {
         id="face",
-        name = "Face",
+        name = txt[lang]['face'],
         description = "",
         onClick = function()
             skinMenu:toMenu("face")
@@ -417,7 +474,7 @@ skinMenu:setMenu( "head", "Head", {
     },
     {
         id="ears",
-        name = "Ears",
+        name = txt[lang]['ears'],
         description = "",
         onClick = function()
             skinMenu:toMenu("ears")
@@ -431,7 +488,7 @@ skinMenu:setMenu( "head", "Head", {
     },
     {
         id="glasses",
-        name = "Glasses",
+        name = txt[lang]['glasses'],
         description = "",
         onClick = function()
             skinMenu:toMenu("glasses")
@@ -445,7 +502,7 @@ skinMenu:setMenu( "head", "Head", {
     },
     {
         id="helmet",
-        name = "Hats",
+        name = txt[lang]['hats'],
         description = "",
         onClick = function()
             skinMenu:toMenu("helmet")
@@ -459,7 +516,7 @@ skinMenu:setMenu( "head", "Head", {
     },
     {
         id="mask",
-        name = "Mask",
+        name = txt[lang]['masks'],
         description = "",
         onClick = function()
             skinMenu:toMenu("mask")
@@ -473,12 +530,12 @@ skinMenu:setMenu( "head", "Head", {
     }
 }, false )
 
-skinMenu:setMenu( "glasses", "Glasses", function() return skinMenu:getPropList(1) end, true )
-skinMenu:setMenu( "helmet", "Hats", function() return skinMenu:getPropList(0) end, true )
-skinMenu:setMenu( "body", "Body", {
+skinMenu:setMenu( "glasses", txt[lang]['glasses'], function() return skinMenu:getPropList(1) end, true )
+skinMenu:setMenu( "helmet", txt[lang]['hats'], function() return skinMenu:getPropList(0) end, true )
+skinMenu:setMenu( "body", txt[lang]['body'], {
     {
         id="glove",
-        name = "Arms and gloves",
+        name = txt[lang]['gloves'],
         description = "",
         onClick = function()
             skinMenu:toMenu("glove")
@@ -492,7 +549,7 @@ skinMenu:setMenu( "body", "Body", {
     },
     {
         id="tshirt",
-        name = "Shirts",
+        name = txt[lang]['shirts'],
         description = "",
         onClick = function()
             skinMenu:toMenu("tshirt")
@@ -506,7 +563,7 @@ skinMenu:setMenu( "body", "Body", {
     },
     {
         id="jacket",
-        name = "Jackets",
+        name = txt[lang]['jackets'],
         description = "",
         onClick = function()
             skinMenu:toMenu("jacket")
@@ -520,17 +577,17 @@ skinMenu:setMenu( "body", "Body", {
     },
 }, false )
 
-skinMenu:setMenu( "face", "Face", function() return skinMenu:getDrawableList(0) end , true )
-skinMenu:setMenu( "hair", "Hair", function() return skinMenu:getDrawableList(2) end , true )
-skinMenu:setMenu( "ears", "Ears", function() return skinMenu:getPropList(2) end , true )
-skinMenu:setMenu( "mask", "Mask", function() return skinMenu:getDrawableList(1) end, true )
-skinMenu:setMenu( "pant", "Pants", function() return skinMenu:getDrawableList(4) end, true )
-skinMenu:setMenu( "shoe", "Shoes", function() return skinMenu:getDrawableList(6) end, true )
-skinMenu:setMenu( "accessory1", "Vests", function() return skinMenu:getDrawableList(9) end, true )
-skinMenu:setMenu( "accessory2", "Bags", function() return skinMenu:getDrawableList(5) end, true )
-skinMenu:setMenu( "glove", "Arms and gloves", function() return skinMenu:getDrawableList(3) end, true )
-skinMenu:setMenu( "tshirt", "Shirts", function() return skinMenu:getDrawableList(8) end, true )
-skinMenu:setMenu( "jacket", "Jackets", function() return skinMenu:getDrawableList(11) end, true )
+skinMenu:setMenu( "face", txt[lang]['face'], function() return skinMenu:getDrawableList(0) end , true )
+skinMenu:setMenu( "hair", txt[lang]['hair'], function() return skinMenu:getDrawableList(2) end , true )
+skinMenu:setMenu( "ears", txt[lang]['ears'], function() return skinMenu:getPropList(2) end , true )
+skinMenu:setMenu( "mask", txt[lang]['masks'], function() return skinMenu:getDrawableList(1) end, true )
+skinMenu:setMenu( "pant", txt[lang]['pants'], function() return skinMenu:getDrawableList(4) end, true )
+skinMenu:setMenu( "shoe", txt[lang]['shoes'], function() return skinMenu:getDrawableList(6) end, true )
+skinMenu:setMenu( "accessory1", txt[lang]['vests'], function() return skinMenu:getDrawableList(9) end, true )
+skinMenu:setMenu( "accessory2", txt[lang]['bags'], function() return skinMenu:getDrawableList(5) end, true )
+skinMenu:setMenu( "glove", txt[lang]['gloves'], function() return skinMenu:getDrawableList(3) end, true )
+skinMenu:setMenu( "tshirt", txt[lang]['shirts'], function() return skinMenu:getDrawableList(8) end, true )
+skinMenu:setMenu( "jacket", txt[lang]['jackets'], function() return skinMenu:getDrawableList(11) end, true )
 
 
 -- Places the blips on the map
@@ -551,9 +608,14 @@ Citizen.CreateThread(function()
         if(IsNearShop()) then
             if IsControlJustPressed(1,51) then
                 skinMenu.open = true
+                isLeaving = true
             end
         else
             skinMenu:close()
+            if isLeaving then
+              TriggerServerEvent("clothing_shop:SpawnPlayer_server") -- Validate the choices ;)
+              isLeaving = false
+            end
         end
         Citizen.Wait(0)
     end
