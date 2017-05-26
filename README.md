@@ -17,6 +17,7 @@
 - Buy new clothes (it will also update in your DBMS)
 - Blips on the map
 - Marker in shops
+- Multi-language support (US/FR)
 - Elegant menu
 - Try clothes before to buy them
 - Notifications on buying
