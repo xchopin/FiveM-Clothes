@@ -99,6 +99,7 @@ end
 RegisterServerEvent("clothing_shop:SpawnPlayer_server")
 AddEventHandler("clothing_shop:SpawnPlayer_server", function()
 	TriggerEvent('es:getPlayerFromId', source, function(user)
+		TriggerEvent('weaponshop:GiveWeaponsToPlayer', source)
 		local player = user.identifier
 		local executed_query = MySQL:executeQuery("SELECT isFirstConnection FROM users WHERE identifier = '@username'", {['@username'] = player})
 		local result = MySQL:getResults(executed_query, {'isFirstConnection'}, "identifier")
@@ -164,6 +165,8 @@ AddEventHandler("clothing_shop:SaveItem_server", function(item, values)
 			    }
 			)
 		end
+		TriggerClientEvent("es_freeroam:notify", source, "CHAR_SOCIAL_CLUB", 1, "Binco Shop", false, "You bought a new item!")
+		
 	end)
 end)
 
