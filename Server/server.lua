@@ -4,7 +4,7 @@
 ---------------------------------------------------------------------------------------
 
 require "resources/essentialmode/lib/MySQL"
-local settings = require "resources/FiveM_ClothingShop/Server/settings"
+local settings = require "resources/clothing_shop/Server/settings"
 MySQL:open(settings.host, settings.db, settings.user, settings.password)
 local SQL_COLUMNS = {
     'skin',
