@@ -9,6 +9,7 @@
 ## Requirements
 - EssentialMode 2.X
 - MySQL or MariaDB (_not tested_)
+- Latest FiveM Server program
 
 ## Features
 - Load skin on spawn/death
@@ -17,6 +18,8 @@
 - Blips on the map
 - Marker in shops
 - Elegant menu
+- Try clothes before to buy them
+- Notifications on buying
 - A lot of accessories
 - Choice of the gender
 - Legacy function (_in tribute of skin_customization_) for a compatibility with old mods like FiveM_Cops
