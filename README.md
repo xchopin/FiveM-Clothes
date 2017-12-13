@@ -4,17 +4,16 @@
 
 <img src=http://i.imgur.com/bB1K7ug.jpg>
 
-## Caution: work in progress
+## Not maintained anymore
 
 ## Requirements
 - EssentialMode 2.X
-- MySQL or MariaDB (_not tested_)
-- Latest FiveM Server program
+- MySQL or MariaDB
 
 ## Features
-- Load skin on spawn/death
+- Load skin and clothes on spawn/death
 - Fast loading
-- Buy new clothes (it will also update in your DBMS)
+- Buy new clothes
 - Blips on the map
 - Marker in shops
 - Multi-language support (US/FR)
@@ -25,16 +24,12 @@
 - Choice of the gender
 - Legacy function (_in tribute of skin_customization_) for a compatibility with old mods like FiveM_Cops
 
-## ToDo
-- Payment
-- Remove a cloth
-- More events for developers
 
 ## Getting Started
 
 ### 1. Clone the repository
 ``` bash
-$ git clone https://github.com/xchopin/FiveM_ClothingShop.git
+$ git clone https://github.com/xchopin/FiveM-Clothes.git
 ```
 
 ### 2. Import the SQL file into your DBMS
@@ -99,10 +94,8 @@ clothing_shop:getSkin_client(skin)
 ``` 
 ``` lua
 -- Set all the items on a player
--- @param items: JSON format, needs all the columns elements
+-- @param items: JSON format, it requires all the component elements
 
 clothing_shop:loadItems_client(items)
 ```
-
-*More events in the next release*
 
