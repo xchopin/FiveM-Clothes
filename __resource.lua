@@ -2,12 +2,18 @@
 --                     Author: Xavier CHOPIN <www.github.com/xchopin>                --
 --                                 License: Apache 2.0                               --
 ---------------------------------------------------------------------------------------
+resource_manifest_version '44febabe-d386-4d18-afbe-5e627f4af937'
+
+dependency 'mysql-async'
 
 --------------------------------------
 ------------ SERVER ------------------
 --------------------------------------
-server_script 'Server/server.lua' ----
-server_script 'Server/settings.lua' --
+server_scripts {
+    'Server/server.lua',
+    '@mysql-async/lib/MySQL.lua'
+}
+--server_script 'Server/settings.lua' --
 --------------------------------------
 --------------------------------------
 
