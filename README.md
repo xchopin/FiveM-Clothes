@@ -32,7 +32,7 @@ $ git clone https://github.com/xchopin/FiveM-Clothes.git
 
 ### 2. Import the SQL file into your DBMS
 ``` bash
-$ mysql> ./install.sql # or ./ugly_install.sql if you get in trouble with foreign keys
+$ mysql> ./clothing_shop_SQL.sql
 ```
 
 
