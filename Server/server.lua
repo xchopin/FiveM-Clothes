@@ -1,11 +1,19 @@
----------------------------------------------------------------------------------------
---                     Author: Xavier CHOPIN <www.github.com/xchopin>                --
---                                 License: Apache 2.0                               --
----------------------------------------------------------------------------------------
+--[[Info]]--
 
-require "resources/essentialmode/lib/MySQL"
-local settings = require "resources/clothing_shop/Server/settings"
-MySQL:open(settings.host, settings.db, settings.user, settings.password)
+
+--[[Register]]--
+
+RegisterServerEvent("clothing_shop:SetItems_server")
+RegisterServerEvent("clothing_shop:SpawnPlayer_server")
+RegisterServerEvent("skin_customization:SpawnPlayer")
+RegisterServerEvent("clothing_shop:SaveItem_server")
+RegisterServerEvent("clothing_shop:GetSkin_server")
+RegisterServerEvent("clothing_shop:WithDraw_server")
+
+
+
+--[[Local/Global]]--
+
 local SQL_COLUMNS = {
     'skin',
     'face',
@@ -35,6 +43,20 @@ local SQL_COLUMNS = {
     'ears',
     'ears_texture'
 }
+
+
+
+--[[Function]]--
+
+function getPlayerID(source)
+	return getIdentifiant(GetPlayerIdentifiers(source))
+end
+
+function getIdentifiant(id)
+	for _, v in ipairs(id) do
+		return v
+	end
+end
 
 -- Gives you the column name for a collection and id given
 -- collection can be "skin", valueId can be null)
@@ -91,100 +113,111 @@ function giveColumnName(collection, valueId)
 			end
 		end
 	end
-
  	return res
 end
 
+function getIsFirstConnection(source)
+	return MySQL.Sync.fetchScalar("SELECT isFirstConnection FROM users WHERE identifier=@identifier",
+		{['@identifier'] = getPlayerID(source)}) 
+end
 
-RegisterServerEvent("clothing_shop:SpawnPlayer_server")
-AddEventHandler("clothing_shop:SpawnPlayer_server", function()
-	TriggerEvent('es:getPlayerFromId', source, function(user)
-		TriggerEvent('weaponshop:GiveWeaponsToPlayer', source)
-		local player = user.identifier
-		local executed_query = MySQL:executeQuery("SELECT isFirstConnection FROM users WHERE identifier = '@username'", {['@username'] = player})
-		local result = MySQL:getResults(executed_query, {'isFirstConnection'}, "identifier")
-		if(result[1].isFirstConnection == 1)then
-			MySQL:executeQuery("INSERT INTO user_clothes(identifier) VALUES ('@identifier')",{['@identifier']=player})
-			MySQL:executeQuery("UPDATE users SET isFirstConnection = 0 WHERE identifier = '@username'", {['@username'] = player})
-			executed_query = MySQL:executeQuery("SELECT * FROM user_clothes WHERE identifier = '@username'", {['@username'] = player})
-			result = MySQL:getResults(executed_query, SQL_COLUMNS, "identifier")
-			TriggerClientEvent("clothing_shop:loadItems_client", source, result[1]) -- Updates the client's skin with default values
-		end
-			executed_query = MySQL:executeQuery("SELECT * FROM user_clothes WHERE identifier = '@username'", {['@username'] = player})
-			result = MySQL:getResults(executed_query, SQL_COLUMNS, "identifier")
-			TriggerClientEvent("clothing_shop:loadItems_client", source, result[1]) -- Updates the client's skin with default values
-		
+function createPlayerIntoDbClothes(source)
+	MySQL.Async.execute("INSERT INTO user_clothes (identifier) VALUES (@identifier)",
+		{['@identifier']= getPlayerID(source) }, function(data)  
 	end)
-end)
+end
 
-
--- LEGACY FUNCTION TO BE ABLE TO USE OLD PLUGINS
-RegisterServerEvent("skin_customization:SpawnPlayer")
-AddEventHandler("skin_customization:SpawnPlayer", function()
-	TriggerEvent('es:getPlayerFromId', source, function(user)
-		local player = user.identifier
-		local executed_query = MySQL:executeQuery("SELECT isFirstConnection FROM users WHERE identifier = '@username'", {['@username'] = player})
-		local result = MySQL:getResults(executed_query, {'isFirstConnection'}, "identifier")
-		if(result[1].isFirstConnection == 1)then
-			MySQL:executeQuery("INSERT INTO user_clothes(identifier) VALUES ('@identifier')",{['@identifier']=player})
-			MySQL:executeQuery("UPDATE users SET isFirstConnection = 0 WHERE identifier = '@username'", {['@username'] = player})
-		end
-		executed_query = MySQL:executeQuery("SELECT * FROM user_clothes WHERE identifier = '@username'", {['@username'] = player})
-		result = MySQL:getResults(executed_query, SQL_COLUMNS, "identifier")
-		TriggerClientEvent("clothing_shop:loadItems_client", source, result[1]) -- Updates the client's skin with default values
+function updateIsFirstConnection(source)
+	MySQL.Async.execute("UPDATE users SET isFirstConnection=@isFirstConnection WHERE identifier=@identifier",
+		{['@identifier'] = getPlayerID(source), ['@isFirstConnection'] = 0}, function(data)
 	end)
-end)
+end
 
-
-
-RegisterServerEvent("clothing_shop:SetItems_server")
-	AddEventHandler("clothing_shop:SetItems_servers",function()
-	TriggerEvent('es:getPlayerFromId', source, function(user)
-		local player = user.identifier
-		local executed_query = MySQL:executeQuery("SELECT * FROM user_clothes WHERE identifier = '@username'", {['@username'] = player})
-		local result = MySQL:getResults(executed_query, SQL_COLUMNS, "identifier")
-		TriggerClientEvent("clothing_shop:loadItems_client", source, result[1])
+function updatePlayerClothes1(source,values)
+	local source = exports.essentialmode:getPlayerFromId(player)
+	MySQL.Async.execute("UPDATE user_clothes SET skin=@value WHERE identifier=@identifier",
+		{['@identifier'] = getPlayerID(source), ['@value'] = values }, function(data)
 	end)
-end)
+end
 
-RegisterServerEvent("clothing_shop:SaveItem_server")
-AddEventHandler("clothing_shop:SaveItem_server", function(item, values)
-	TriggerEvent('es:getPlayerFromId', source, function(user)
-		local name = giveColumnName(item.collection, item.id)
-		if (name == "skin") then
-			MySQL:executeQuery("UPDATE user_clothes SET skin = '@value' WHERE identifier = '@identifier'",{ 
-				   ['@value'] = values.value, 
-				   ['@identifier'] = user.identifier	
-			    }
-			)
-		else
-			MySQL:executeQuery("UPDATE user_clothes SET ".. name .." = '@value', ".. name..'_texture' .." = '@texture_value' WHERE identifier = '@identifier'",{ 
-				   ['@value'] = values.value,
-				   ['@texture_value'] = values.texture_value,
-				   ['@identifier'] = user.identifier	
-			    }
-			)
-		end
+function updatePlayerClothes2(name,values,textures)
+
+	MySQL.Async.execute("UPDATE user_clothes SET ".. name .."=@value, ".. name..'_texture' .."=@texture_value WHERE identifier=@identifier",
+		{['@identifier'] = getPlayerID(source), ['@value'] = values, ['@texture_value'] = textures}, function(data)
+	end)
+end
+
+function getSPlayerSkin(source)
+	return MySQL.Sync.fetchScalar("SELECT skin FROM user_clothes WHERE identifier=@identifier",
+		{['@identifier'] = getPlayerID(source)})
+end
+
+function getBackPackId(source,values)
+	return MySQL.Sync.fetchScalar("SELECT id FROM backpack WHERE prop=@prop",
+		{['@prop'] = values})
+end
+
+function getBackPackPrice(source,values)
+	return MySQL.Sync.fetchScalar("SELECT price FROM backpack WHERE id=@backpack_id",
+		{['@backpack_id'] = getBackPackId(values)})
+end
+
+function updatePlayerBackPack(source,values)
+	if getBackPackId(values) then
+		MySQL.Async.execute("UPDATE users SET backpack_id=@backpack_id WHERE identifier=@identifier",
+			{['@identifier'] = getPlayerID(source), ['@backpack_id'] = getBackPackId(values)}, function(data)
+		end)
+		TriggerEvent('es:getPlayerFromId', source, function(user)
+			if user.money >= getBackPackPrice(values) then
+			user:removeMoney((getBackPackPrice(values)))			
+			TriggerClientEvent("es_freeroam:notify", source, "CHAR_SOCIAL_CLUB", 1, "Binco Shop", false, "You bought a new item!")
+			else
+				TriggerClientEvent("clothing_shop:noMoney", source)
+			end
+		end)
+	else		
 		TriggerClientEvent("es_freeroam:notify", source, "CHAR_SOCIAL_CLUB", 1, "Binco Shop", false, "You bought a new item!")
-		
+		TriggerClientEvent("clothing_shop:backPackInfo", source)
+	end
+end
+
+
+--[[Events]]--
+
+AddEventHandler("clothing_shop:SpawnPlayer_server", function()
+	local source = source
+	if(getIsFirstConnection(source) == 1) then
+		createPlayerIntoDbClothes(source)
+		updateIsFirstConnection(source)
+		MySQL.Async.fetchAll("SELECT * FROM user_clothes WHERE identifier=@identifier", {['@identifier'] = getPlayerID(source)}, function(data)
+			TriggerClientEvent("clothing_shop:loadItems_client", source, data[1])
+		end)
+	else
+		MySQL.Async.fetchAll("SELECT * FROM user_clothes WHERE identifier=@identifier", {['@identifier'] = getPlayerID(source)}, function(data)
+			TriggerClientEvent("clothing_shop:loadItems_client", source, data[1])
+		end)
+	end
+end)
+
+AddEventHandler("clothing_shop:SetItems_servers",function()
+	MySQL.Async.fetchAll("SELECT * FROM user_clothes WHERE identifier=@identifier", {['@identifier'] = getPlayerID(source)}, function(data)
+		TriggerClientEvent("clothing_shop:loadItems_client", source, data[1])
 	end)
 end)
 
-RegisterServerEvent("clothing_shop:GetSkin_server")
-	AddEventHandler("clothing_shop:GetSkin_server",function()
-	TriggerEvent('es:getPlayerFromId', source, function(user)
-		local executed_query = MySQL:executeQuery("SELECT skin FROM user_clothes WHERE identifier = '@identifier'", {['@identifier'] = user.identifier})
-		local result = MySQL:getResults(executed_query, {"skin"}, "identifier")
-		TriggerClientEvent("clothing_shop:getSkin_client", source, result[1].skin)
-	end)
+AddEventHandler("clothing_shop:SaveItem_server", function(item, values)
+	if (giveColumnName(item.collection, item.id) == "skin") then
+		updatePlayerClothes1(values.value)		
+		TriggerClientEvent("es_freeroam:notify", source, "CHAR_SOCIAL_CLUB", 1, "Binco Shop", false, "You bought a new item!")
+	else
+		updatePlayerClothes2(giveColumnName(item.collection, item.id),values.value,values.texture_value)
+		if (giveColumnName(item.collection, item.id) == "bag" ) then
+
+			updatePlayerBackPack(values.value)
+		end
+	end
 end)
 
-
-RegisterServerEvent("clothing_shop:WithDraw_server")
-AddEventHandler("clothing_shop:WithDraw_server",function(item, values)
-TriggerEvent('es:getPlayerFromId', source, function(user)
-		local executed_query = MySQL:executeQuery("SELECT money FROM users WHERE identifier = '@identifier'", {['@identifier'] = user.identifier})
-		local result = MySQL:getResults(executed_query, 'money', "identifier")
-		TriggerClientEvent("clothing_shop:buyItem_client", source, {item=item, values=values, money=result[1].money})
-	end)
+AddEventHandler("clothing_shop:GetSkin_server",function()
+	TriggerClientEvent("clothing_shop:getSkin_client", source, getSPlayerSkin())
 end)
